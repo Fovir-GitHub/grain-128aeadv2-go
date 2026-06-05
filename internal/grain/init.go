@@ -15,12 +15,14 @@ func (g *Grain128AEADV2) Init() {
 func (g *Grain128AEADV2) initLFSRNFSR() {
 	// LFSR = Nonce + 31 ones + a zero
 	// NFSR = Key
+	g.LFSR = make([]int, 0, 128)
 	g.LFSR = append(g.LFSR, g.nonce...)
 	for range 31 {
 		g.LFSR = append(g.LFSR, 1)
 	}
 	g.LFSR = append(g.LFSR, 0)
 
+	g.NFSR = make([]int, 128)
 	copy(g.NFSR, g.key)
 }
 
