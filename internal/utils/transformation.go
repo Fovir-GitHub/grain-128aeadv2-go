@@ -1,6 +1,10 @@
 package utils
 
-import "fmt"
+import (
+	"encoding/hex"
+	"fmt"
+	"strings"
+)
 
 func Byte2Bits(b []byte) []int {
 	bits := make([]int, len(b)*8)
@@ -27,4 +31,13 @@ func Bits2Byte(bits []int) ([]byte, error) {
 		bytes[i] = byte(b)
 	}
 	return bytes, nil
+}
+
+func Hex2Byte(s string) ([]byte, error) {
+	s = strings.TrimPrefix(strings.ToLower(s), "0x")
+	b, err := hex.DecodeString(s)
+	if err != nil {
+		return nil, fmt.Errorf("decode hex string %s failed: %w", s, err)
+	}
+	return b, nil
 }
