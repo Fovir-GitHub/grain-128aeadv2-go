@@ -18,6 +18,7 @@
         gotools
         govulncheck
         just
+        typescript
       ];
 
       # Shell hooks.
