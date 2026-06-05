@@ -41,3 +41,11 @@ func Hex2Byte(s string) ([]byte, error) {
 	}
 	return b, nil
 }
+
+func Bits2Hex(bits []int) (string, error) {
+	b, err := Bits2Byte(bits)
+	if err != nil {
+		return "", fmt.Errorf("bits to hex failed: %w", err)
+	}
+	return hex.EncodeToString(b), nil
+}

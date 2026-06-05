@@ -168,3 +168,103 @@ func TestHex2Byte(t *testing.T) {
 		})
 	}
 }
+
+func TestBits2Hex(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		bits    []int
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "Empty",
+			bits:    []int{},
+			want:    "",
+			wantErr: false,
+		},
+		{
+			name: "Single Byte a",
+			bits: []int{
+				1, 0, 0, 0, 0, 1, 1, 0, // 0x61
+			},
+			want:    "61",
+			wantErr: false,
+		},
+		{
+			name: "Single Byte ff",
+			bits: []int{
+				1, 1, 1, 1, 1, 1, 1, 1,
+			},
+			want:    "ff",
+			wantErr: false,
+		},
+		{
+			name: "Single Byte 00",
+			bits: []int{
+				0, 0, 0, 0, 0, 0, 0, 0,
+			},
+			want:    "00",
+			wantErr: false,
+		},
+		{
+			name: "Multiple Bytes",
+			bits: []int{
+				// 0x12
+				0, 1, 0, 0, 1, 0, 0, 0,
+				// 0x34
+				0, 0, 1, 0, 1, 1, 0, 0,
+				// 0x56
+				0, 1, 1, 0, 1, 0, 1, 0,
+			},
+			want:    "123456",
+			wantErr: false,
+		},
+		{
+			name: "ASCII abc",
+			bits: []int{
+				// 0x61
+				1, 0, 0, 0, 0, 1, 1, 0,
+				// 0x62
+				0, 1, 0, 0, 0, 1, 1, 0,
+				// 0x63
+				1, 1, 0, 0, 0, 1, 1, 0,
+			},
+			want:    "616263",
+			wantErr: false,
+		},
+		{
+			name: "Length Not Divisible By 8",
+			bits: []int{
+				1, 0, 1,
+			},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name: "Invalid Bit Value",
+			bits: []int{
+				2, 0, 0, 0, 0, 0, 0, 0,
+			},
+			want:    "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, gotErr := utils.Bits2Hex(tt.bits)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Bits2Hex() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Bits2Hex() succeeded unexpectedly")
+			}
+			if got != tt.want {
+				t.Errorf("Bits2Hex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
