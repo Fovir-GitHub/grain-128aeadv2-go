@@ -1,7 +1,11 @@
 package grain
 
+// Init initializes LFSR and NFSR for encryption and decryption.
 func (g *Grain128AEADV2) Init() {
+	// Load key and nonce into LFSR and NFSR.
 	g.loadLFSRNFSR()
+
+	// Initialize LFSR and NFSR.
 	for t := range 512 {
 		lfsrFeedback := g.lfsrFeedback()
 		nfsrFeedback := g.nfsrFeedback()
@@ -12,8 +16,11 @@ func (g *Grain128AEADV2) Init() {
 	}
 }
 
-	// LFSR = Nonce + 31 ones + a zero
-	// NFSR = Key
+// loadLFSRNFSR loads LFSR and NFSR using key and nonce.
+//
+// LFSR = Nonce + 31 ones + a zero
+//
+// NFSR = Key
 func (g *Grain128AEADV2) loadLFSRNFSR() {
 	g.LFSR = make([]int, 0, 128)
 	g.LFSR = append(g.LFSR, g.nonce...)
@@ -26,12 +33,14 @@ func (g *Grain128AEADV2) loadLFSRNFSR() {
 	copy(g.NFSR, g.key)
 }
 
+// lfsrFeedback calculates the LFSR feedback value L(S_t).
 func (g *Grain128AEADV2) lfsrFeedback() int {
 	s := g.LFSR
 	feedback := s[0] ^ s[7] ^ s[38] ^ s[70] ^ s[81] ^ s[96]
 	return feedback
 }
 
+// nfsrFeedback calculates the NFSR feedback value F(B_t).
 func (g *Grain128AEADV2) nfsrFeedback() int {
 	b := g.NFSR
 	feedback := (b[0] ^
@@ -52,6 +61,7 @@ func (g *Grain128AEADV2) nfsrFeedback() int {
 	return feedback
 }
 
+// h is the functiton h(x).
 func (g *Grain128AEADV2) h() int {
 	s := g.LFSR
 	b := g.NFSR
@@ -74,6 +84,7 @@ func (g *Grain128AEADV2) h() int {
 	return hx
 }
 
+// preOutput calculates the value of y_t.
 func (g *Grain128AEADV2) preOutput() int {
 	hx := g.h()
 	s93 := g.LFSR[93]
@@ -89,10 +100,12 @@ func (g *Grain128AEADV2) preOutput() int {
 	return yt
 }
 
+// shiftLFSR updates LFSR based on `t`.
 func (g *Grain128AEADV2) shiftLFSR(t, lfsrFeedback, yt int) {
 	k := g.key
 	s127 := 0
 
+	// Update `s127` based on `t <= 319`, `t <= 383`, or `t <= 511` (otherwise).
 	if t <= 319 {
 		s127 = lfsrFeedback ^ yt
 	} else if t <= 383 {
@@ -104,10 +117,12 @@ func (g *Grain128AEADV2) shiftLFSR(t, lfsrFeedback, yt int) {
 	g.LFSR = append(g.LFSR[1:], s127)
 }
 
+// shiftNFSR updates NFSR based on `t`.
 func (g *Grain128AEADV2) shiftNFSR(t, s0, nfsrFeedback, yt int) {
 	k := g.key
 	b127 := 0
 
+	// Update b127 based on `t <= 319`, `t <= 383`, or `t <= 511` (otherwise).
 	if t <= 319 {
 		b127 = s0 ^ nfsrFeedback ^ yt
 	} else if t <= 383 {
