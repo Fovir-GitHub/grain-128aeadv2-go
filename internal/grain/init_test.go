@@ -38,7 +38,7 @@ func TestGrain128AEADV2_initLFSRNFSR(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			g.initLFSRNFSR()
+			g.loadLFSRNFSR()
 
 			gotLFSR, err := utils.Bits2Hex(g.LFSR)
 			if err != nil {

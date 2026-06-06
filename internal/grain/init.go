@@ -1,7 +1,7 @@
 package grain
 
 func (g *Grain128AEADV2) Init() {
-	g.initLFSRNFSR()
+	g.loadLFSRNFSR()
 	for t := range 512 {
 		lfsrFeedback := g.lfsrFeedback()
 		nfsrFeedback := g.nfsrFeedback()
@@ -12,9 +12,9 @@ func (g *Grain128AEADV2) Init() {
 	}
 }
 
-func (g *Grain128AEADV2) initLFSRNFSR() {
 	// LFSR = Nonce + 31 ones + a zero
 	// NFSR = Key
+func (g *Grain128AEADV2) loadLFSRNFSR() {
 	g.LFSR = make([]int, 0, 128)
 	g.LFSR = append(g.LFSR, g.nonce...)
 	for range 31 {
