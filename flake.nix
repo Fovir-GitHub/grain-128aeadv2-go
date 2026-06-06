@@ -14,6 +14,7 @@
       # Add packages here.
       buildInputs = with pkgs; [
         go
+        golangci-lint
         gopls
         gotools
         govulncheck
