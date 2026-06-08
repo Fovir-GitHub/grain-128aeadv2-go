@@ -3,6 +3,8 @@ package keys
 import (
 	"encoding/hex"
 	"testing"
+
+	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
 )
 
 func Test_kdf(t *testing.T) {
@@ -46,7 +48,7 @@ func Test_kdf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			salt, _ := hex.DecodeString(tt.salt)
+			salt, _ := utils.Hex2Byte(tt.salt)
 			got, gotErr := kdf(tt.passphrase, salt, tt.iter, tt.keysize)
 			if gotErr != nil {
 				if !tt.wantErr {

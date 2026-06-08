@@ -3,6 +3,7 @@ package keys
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
@@ -88,6 +89,10 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 	}
 
 	return a.Auth(kWrap, k.Wrapped, k.Tag)
+}
+
+func (k *Keys) Encode(w io.Writer) error {
+	return json.NewEncoder(w).Encode(k)
 }
 
 func (k *Keys) SaveToFile(path string) error {

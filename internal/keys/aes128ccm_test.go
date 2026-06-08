@@ -2,11 +2,11 @@ package keys_test
 
 import (
 	"bytes"
-	"encoding/hex"
 	"slices"
 	"testing"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/keys"
+	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
 )
 
 func TestNewAES128CCM(t *testing.T) {
@@ -128,7 +128,7 @@ func TestAES128CCM_Encrypt(t *testing.T) {
 func hexDecode(t *testing.T, s string) []byte {
 	t.Helper()
 
-	b, err := hex.DecodeString(s)
+	b, err := utils.Hex2Byte(s)
 	if err != nil {
 		t.Fatalf("invalid hex %q: %v", s, err)
 	}
