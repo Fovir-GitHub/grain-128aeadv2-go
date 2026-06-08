@@ -59,7 +59,6 @@ func Test_kdf(t *testing.T) {
 			}
 
 			gotStr := hex.EncodeToString(got)
-			// TODO: update the condition below to compare got with tt.want.
 			if tt.want != gotStr {
 				t.Errorf("KDF() = %v, want %v", gotStr, tt.want)
 			}
