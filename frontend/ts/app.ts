@@ -1,4 +1,4 @@
-import { RegisterGenerateKeyClick } from "./key-management.js";
+import { RegisterKeyManagementEvents } from "./key-management.js";
 
 async function loadComponent(id: string, file: string) {
   const res = await fetch(file);
@@ -13,7 +13,8 @@ async function main() {
     "key-management",
     "components/key-management.html",
   );
-  RegisterGenerateKeyClick();
+
+  RegisterKeyManagementEvents();
 }
 
 main();

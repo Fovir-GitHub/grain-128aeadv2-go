@@ -1,3 +1,4 @@
+// Generate a random 128-bit (16 bytes) key.
 function generateKey(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
@@ -6,6 +7,7 @@ function generateKey(): string {
     .join("");
 }
 
+// Handle the click event on `Generate Key` button.
 function handleGenerateKeyClick() {
   const input = document.getElementById(
     "key-management-key-input",
@@ -14,7 +16,6 @@ function handleGenerateKeyClick() {
   input.value = key;
 }
 
-export function RegisterGenerateKeyClick() {
 // Handle the click event on `Wrap & Save .key File` button.
 async function handleWrapSaveKeyClick() {
   // A tool function.
@@ -57,8 +58,22 @@ async function handleWrapSaveKeyClick() {
   URL.revokeObjectURL(url);
 }
 
+function registerGenerateKeyClick() {
   const btn = document.getElementById(
     "key-management-generate-key",
   ) as HTMLButtonElement;
   btn.addEventListener("click", handleGenerateKeyClick);
+}
+
+function registerWrapSaveKeyClick() {
+  const btn = document.getElementById(
+    "key-management-wrap-save-key",
+  ) as HTMLButtonElement;
+  btn.addEventListener("click", handleWrapSaveKeyClick);
+}
+
+// Register all key management events.
+export function RegisterKeyManagementEvents() {
+  registerGenerateKeyClick();
+  registerWrapSaveKeyClick();
 }
