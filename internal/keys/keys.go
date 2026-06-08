@@ -75,7 +75,7 @@ func (k *Keys) Wrap(passphrase string, kGrain, ad []byte) error {
 
 // Unwrap recovers the wrapped key with given `passphrase`,
 // and authenticates the integrity using the given associated data (`ad`).
-func (k *Keys) Unwrap(passphrase string, ad []byte) ([]byte, error) {
+func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 	// Derive kWrap.
 	kWrap, err := kdf(passphrase, k.Salt, k.Iterations, KeySize)
 	if err != nil {

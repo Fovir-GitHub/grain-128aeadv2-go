@@ -24,7 +24,7 @@ func NewAES128CCM(nonce, ad []byte) (*AES128CCM, error) {
 }
 
 // Encrypt calculates ciphertext and tag using AES-128-CCM.
-func (a *AES128CCM) Encrypt(key, plaintext []byte) ([]byte, []byte, error) {
+func (a *AES128CCM) Encrypt(key, plaintext []byte) (ciphertext, tag []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, nil, err
@@ -36,14 +36,14 @@ func (a *AES128CCM) Encrypt(key, plaintext []byte) ([]byte, []byte, error) {
 	}
 
 	output := c.Seal(nil, a.Nonce, plaintext, a.AD)
-	ciphertext := output[:len(plaintext)]
-	tag := output[len(plaintext):]
+	ciphertext = output[:len(plaintext)]
+	tag = output[len(plaintext):]
 
 	return ciphertext, tag, nil
 }
 
 // Auth authenticates the input key with the `.key` file.
-func (a *AES128CCM) Auth(key, ciphertext, tag []byte) ([]byte, error) {
+func (a *AES128CCM) Auth(key, ciphertext, tag []byte) (kGrain []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
