@@ -1,5 +1,6 @@
 run:
   # Start the app
+  tsc
   go run main.go
 
 lint:
