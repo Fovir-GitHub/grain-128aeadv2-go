@@ -1,6 +1,7 @@
 package keys_test
 
 import (
+	"bytes"
 	"encoding/hex"
 	"slices"
 	"testing"
@@ -133,4 +134,132 @@ func hexDecode(t *testing.T, s string) []byte {
 	}
 
 	return b
+}
+
+func TestAES128CCM_Auth(t *testing.T) {
+	mkEncryption := func(key, nonce, plaintext, ad []byte) (ct, tag []byte) {
+		a, err := keys.NewAES128CCM(nonce, ad)
+		if err != nil {
+			t.Fatalf("mkEncryption: NewAES128CCM failed (nonce=%v, ad=%v): %v", nonce, ad, err)
+		}
+		ct, tag, err = a.Encrypt(key, plaintext)
+		if err != nil {
+			t.Fatalf("mkEncryption: Encrypt failed: %v", err)
+		}
+		return ct, tag
+	}
+
+	validKey := []byte("0123456789abcdef")
+	validNonce := []byte("123456789012")
+	validAD := []byte("additional data")
+	validPlain := []byte("hello world")
+
+	validCT, validTag := mkEncryption(validKey, validNonce, validPlain, validAD)
+
+	tamperedTag := func() []byte {
+		b := make([]byte, len(validTag))
+		copy(b, validTag)
+		b[0] ^= 0xFF
+		return b
+	}()
+	tamperedCT := func() []byte {
+		b := make([]byte, len(validCT))
+		copy(b, validCT)
+		b[0] ^= 0xFF
+		return b
+	}()
+
+	tests := []struct {
+		name       string
+		nonce      []byte
+		ad         []byte
+		key        []byte
+		ciphertext []byte
+		tag        []byte
+		want       []byte
+		wantErr    bool
+	}{
+		{
+			name:       "Valid: Correct key/nonce/ad/tag",
+			nonce:      validNonce,
+			ad:         validAD,
+			key:        validKey,
+			ciphertext: validCT,
+			tag:        validTag,
+			want:       validPlain,
+			wantErr:    false,
+		},
+		{
+			name:       "Error: Tampered Tag",
+			nonce:      validNonce,
+			ad:         validAD,
+			key:        validKey,
+			ciphertext: validCT,
+			tag:        tamperedTag,
+			want:       nil,
+			wantErr:    true,
+		},
+		{
+			name:       "Error: Tampered Ciphertext",
+			nonce:      validNonce,
+			ad:         validAD,
+			key:        validKey,
+			ciphertext: tamperedCT,
+			tag:        validTag,
+			want:       nil,
+			wantErr:    true,
+		},
+		{
+			name:       "Error: Wrong AD",
+			nonce:      validNonce,
+			ad:         []byte("wrong ad"),
+			key:        validKey,
+			ciphertext: validCT,
+			tag:        validTag,
+			want:       nil,
+			wantErr:    true,
+		},
+		{
+			name:       "Error: Invalid Key Length",
+			nonce:      validNonce,
+			ad:         validAD,
+			key:        []byte("shortkey"),
+			ciphertext: validCT,
+			tag:        validTag,
+			want:       nil,
+			wantErr:    true,
+		},
+		{
+			name:       "Valid: Empty Plaintext",
+			nonce:      validNonce,
+			ad:         validAD,
+			key:        validKey,
+			ciphertext: func() []byte { ct, _ := mkEncryption(validKey, validNonce, []byte{}, validAD); return ct }(),
+			tag:        func() []byte { _, tag := mkEncryption(validKey, validNonce, []byte{}, validAD); return tag }(),
+			want:       []byte{},
+			wantErr:    false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a, err := keys.NewAES128CCM(tt.nonce, tt.ad)
+			if err != nil {
+				t.Fatalf("could not construct receiver type: %v", err)
+			}
+			got, gotErr := a.Auth(tt.key, tt.ciphertext, tt.tag)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Auth() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Auth() succeeded unexpectedly")
+			}
+			if !bytes.Equal(got, tt.want) {
+				t.Errorf("Auth() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
