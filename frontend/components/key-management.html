@@ -1,0 +1,45 @@
+<h2>Key Management</h2>
+
+<div>
+  <span>Hex Key Input (K<sub>Grain</sub>)</span>
+  <input id="key-management-key-input" type="text" />
+  <button id="key-management-generate-key">Generate Key</button>
+</div>
+
+<div>
+  <h3>Key Wrapping & Storage</h3>
+  <div>
+    <span>Password for Wrapping</span>
+    <input type="password" />
+  </div>
+  <div>
+    <span>Associated Data (AD)</span>
+    <input type="text" placeholder="e.g. CYS1234567" />
+    <form>
+      <fieldset>
+        <legend>Input Mode:</legend>
+        <label for="input-mode-hex"
+          ><input
+            type="radio"
+            id="input-mode-hex"
+            name="input-mode"
+            value="hex"
+            checked
+          />HEX</label
+        >
+        <label for="input-mode-text"
+          ><input
+            type="radio"
+            id="input-mode-text"
+            name="input-mode"
+            value="text"
+          />Text</label
+        >
+      </fieldset>
+    </form>
+  </div>
+  <div>
+    <button>Wrap & Save .key File</button>
+    <button>Load .key File</button>
+  </div>
+</div>
