@@ -31,3 +31,61 @@ func New() *Keys {
 		Iterations: Iterations,
 	}
 }
+
+// Wrap wraps `kGrain` with a given `passphrase` and associated data (`ad`).
+//
+// It generates a pair of random salt and nonce before wrapping the key, and calculate the corresponding `Tag` derived from AES-128-CCM algorithm.
+func (k *Keys) Wrap(passphrase string, kGrain, ad []byte) error {
+	// Generate random salt and nonce.
+	salt, err := utils.RandomBytes(SaltSize)
+	if err != nil {
+		return fmt.Errorf("random salt generation failed: %w", err)
+	}
+
+	nonce, err := utils.RandomBytes(NonceSize)
+	if err != nil {
+		return fmt.Errorf("random nonce generation failed: %w", err)
+	}
+
+	// Call KDF to wrap `passphrase` and get  $K_{wrap}$.
+	kWrap, err := kdf(passphrase, salt, k.Iterations, KeySize)
+	if err != nil {
+		return fmt.Errorf("kWrap generation failed: %w", err)
+	}
+
+	// Encrypt `kGrain` with `kWrap` using AES-128-CCM.
+	a, err := NewAES128CCM(nonce, ad)
+	if err != nil {
+		return err
+	}
+
+	ciphertext, tag, err := a.Encrypt(kWrap, kGrain)
+	if err != nil {
+		return fmt.Errorf("encrypt kGrain using kWrap failed: %w", err)
+	}
+
+	// Store values.
+	k.Wrapped = ciphertext
+	k.Nonce = nonce
+	k.Tag = tag
+	k.Salt = salt
+
+	return nil
+}
+
+// Unwrap recovers the wrapped key with given `passphrase`,
+// and authenticates the integrity using the given associated data (`ad`).
+func (k *Keys) Unwrap(passphrase string, ad []byte) ([]byte, error) {
+	// Derive kWrap.
+	kWrap, err := kdf(passphrase, k.Salt, k.Iterations, KeySize)
+	if err != nil {
+		return nil, err
+	}
+
+	a, err := NewAES128CCM(k.Nonce, ad)
+	if err != nil {
+		return nil, err
+	}
+
+	return a.Auth(kWrap, k.Wrapped, k.Tag)
+}
