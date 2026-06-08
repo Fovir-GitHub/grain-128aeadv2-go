@@ -89,3 +89,21 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) ([]byte, error) {
 
 	return a.Auth(kWrap, k.Wrapped, k.Tag)
 }
+
+func (k *Keys) SaveToFile(path string) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close() //nolint
+	return json.NewEncoder(f).Encode(k)
+}
+
+func (k *Keys) ReadFromFile(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close() //nolint
+	return json.NewDecoder(f).Decode(k)
+}
