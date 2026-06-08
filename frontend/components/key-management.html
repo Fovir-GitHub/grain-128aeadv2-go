@@ -10,27 +10,31 @@
   <h3>Key Wrapping & Storage</h3>
   <div>
     <span>Password for Wrapping</span>
-    <input type="password" />
+    <input type="password" id="key-management-password" />
   </div>
   <div>
     <span>Associated Data (AD)</span>
-    <input type="text" placeholder="e.g. CYS1234567" />
+    <input
+      id="key-management-ad"
+      type="text"
+      placeholder="e.g. CYS1234567"
+    />
     <form>
-      <fieldset>
+      <fieldset id="key-management-input-mode">
         <legend>Input Mode:</legend>
-        <label for="input-mode-hex"
+        <label for="key-management-input-mode-hex"
           ><input
             type="radio"
-            id="input-mode-hex"
+            id="key-management-input-mode-hex"
             name="input-mode"
             value="hex"
             checked
           />HEX</label
         >
-        <label for="input-mode-text"
+        <label for="key-management-input-mode-text"
           ><input
             type="radio"
-            id="input-mode-text"
+            id="key-management-input-mode-text"
             name="input-mode"
             value="text"
           />Text</label
@@ -39,7 +43,9 @@
     </form>
   </div>
   <div>
-    <button>Wrap & Save .key File</button>
+    <button id="key-management-wrap-save-key">
+      Wrap & Save .key File
+    </button>
     <button>Load .key File</button>
   </div>
 </div>
