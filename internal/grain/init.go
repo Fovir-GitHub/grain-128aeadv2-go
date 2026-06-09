@@ -1,9 +1,13 @@
 package grain
 
+import "github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
+
 // Init initializes LFSR and NFSR for encryption and decryption.
-func (g *Grain128AEADV2) Init() {
+//
+// It also returns states of LFSR and NFSR after loading and initialziation in hex format string.
+func (g *Grain128AEADV2) Init() (loadedLFSR, loadedNFSR, initLFSR, initNFSR string) {
 	// Load key and nonce into LFSR and NFSR.
-	g.loadLFSRNFSR()
+	loadedLFSR, loadedNFSR = g.loadLFSRNFSR()
 
 	// Initialize LFSR and NFSR.
 	for t := range 512 {
@@ -14,6 +18,11 @@ func (g *Grain128AEADV2) Init() {
 		g.shiftLFSR(t, lfsrFeedback, yt)
 		g.shiftNFSR(t, s0, nfsrFeedback, yt)
 	}
+
+	initLFSR, _ = utils.Bits2Hex(g.LFSR)
+	initNFSR, _ = utils.Bits2Hex(g.NFSR)
+
+	return loadedLFSR, loadedNFSR, initLFSR, initNFSR
 }
 
 // loadLFSRNFSR loads LFSR and NFSR using key and nonce.
@@ -21,7 +30,7 @@ func (g *Grain128AEADV2) Init() {
 // LFSR = Nonce + 31 ones + a zero
 //
 // NFSR = Key
-func (g *Grain128AEADV2) loadLFSRNFSR() {
+func (g *Grain128AEADV2) loadLFSRNFSR() (loadedLFSR, loadedNFSR string) {
 	g.LFSR = make([]int, 0, FeedbackRegisterBitLength)
 	g.LFSR = append(g.LFSR, g.nonce...)
 	for range 31 {
@@ -31,6 +40,10 @@ func (g *Grain128AEADV2) loadLFSRNFSR() {
 
 	g.NFSR = make([]int, FeedbackRegisterBitLength)
 	copy(g.NFSR, g.key)
+
+	loadedLFSR, _ = utils.Bits2Hex(g.LFSR)
+	loadedNFSR, _ = utils.Bits2Hex(g.NFSR)
+	return loadedLFSR, loadedNFSR
 }
 
 // lfsrFeedback calculates the LFSR feedback value L(S_t).

@@ -38,20 +38,13 @@ func TestGrain128AEADV2_initLFSRNFSR(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			g.loadLFSRNFSR()
 
-			gotLFSR, err := utils.Bits2Hex(g.LFSR)
-			if err != nil {
-				t.Fatalf("could not convert LFSR to hex: %v", err)
-			}
+			gotLFSR, gotNFSR := g.loadLFSRNFSR()
+
 			if gotLFSR != tt.wantLFSR {
 				t.Errorf("gotLFSR = %v, want %v", gotLFSR, tt.wantLFSR)
 			}
 
-			gotNFSR, err := utils.Bits2Hex(g.NFSR)
-			if err != nil {
-				t.Fatalf("could not convert NFSR to hex: %v", err)
-			}
 			if gotNFSR != tt.wantNFSR {
 				t.Errorf("gotNFSR = %v, want %v", gotNFSR, tt.wantNFSR)
 			}
@@ -91,20 +84,12 @@ func TestGrain128AEADV2_Init(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not construct receiver type: %v", err)
 			}
-			g.Init()
+			_, _, gotLFSR, gotNFSR := g.Init()
 
-			gotLFSR, err := utils.Bits2Hex(g.LFSR)
-			if err != nil {
-				t.Fatalf("could not convert LFSR to hex: %v", err)
-			}
 			if gotLFSR != tt.wantLFSR {
 				t.Errorf("gotLFSR = %v, want %v", gotLFSR, tt.wantLFSR)
 			}
 
-			gotNFSR, err := utils.Bits2Hex(g.NFSR)
-			if err != nil {
-				t.Fatalf("could not convert NFSR to hex: %v", err)
-			}
 			if gotNFSR != tt.wantNFSR {
 				t.Errorf("gotNFSR = %v, want %v", gotNFSR, tt.wantNFSR)
 			}
