@@ -1,3 +1,4 @@
+import { RegisterCipherEvents } from "./cipher.js";
 import { RegisterKeyManagementEvents } from "./key-management.js";
 import { RegisterNonceManagementEvents } from "./nonce-management.js";
 
@@ -20,8 +21,11 @@ async function main() {
     "components/nonce-management.html",
   );
 
+  await loadComponent("cipher", "components/cipher.html");
+
   RegisterKeyManagementEvents();
   RegisterNonceManagementEvents();
+  RegisterCipherEvents();
 }
 
 main();
