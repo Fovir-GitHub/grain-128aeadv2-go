@@ -1,7 +1,9 @@
 <h2>Key Management</h2>
 
 <div>
-  <span>Hex Key Input (K<sub>Grain</sub>)</span>
+  <label for="key-management-key-input"
+    >Hex Key Input (K<sub>Grain</sub>)</label
+  >
   <input id="key-management-key-input" type="text" />
   <button id="key-management-generate-key">Generate Key</button>
 </div>
@@ -9,11 +11,11 @@
 <div>
   <h3>Key Wrapping & Storage</h3>
   <div>
-    <span>Password for Wrapping</span>
+    <label for="key-management-password">Password for Wrapping</label>
     <input type="password" id="key-management-password" />
   </div>
   <div>
-    <span>Associated Data (AD)</span>
+    <label for="key-management-ad">Associated Data (AD)</label>
     <input
       id="key-management-ad"
       type="text"
@@ -26,7 +28,7 @@
           ><input
             type="radio"
             id="key-management-input-mode-hex"
-            name="input-mode"
+            name="key-management-input-mode"
             value="hex"
             checked
           />HEX</label
@@ -35,7 +37,7 @@
           ><input
             type="radio"
             id="key-management-input-mode-text"
-            name="input-mode"
+            name="key-management-input-mode"
             value="text"
           />Text</label
         >
