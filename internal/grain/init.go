@@ -22,14 +22,14 @@ func (g *Grain128AEADV2) Init() {
 //
 // NFSR = Key
 func (g *Grain128AEADV2) loadLFSRNFSR() {
-	g.LFSR = make([]int, 0, 128)
+	g.LFSR = make([]int, 0, FeedbackRegisterBitLength)
 	g.LFSR = append(g.LFSR, g.nonce...)
 	for range 31 {
 		g.LFSR = append(g.LFSR, 1)
 	}
 	g.LFSR = append(g.LFSR, 0)
 
-	g.NFSR = make([]int, 128)
+	g.NFSR = make([]int, FeedbackRegisterBitLength)
 	copy(g.NFSR, g.key)
 }
 
