@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/grain"
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
 )
 
@@ -38,6 +39,11 @@ func New() *Keys {
 //
 // It generates a pair of random salt and nonce before wrapping the key, and calculate the corresponding `Tag` derived from AES-128-CCM algorithm.
 func (k *Keys) Wrap(passphrase string, kGrain, ad []byte) error {
+	// Check the length of `kGrain`.
+	if len(kGrain) != grain.KeyGrainBitLength/8 {
+		return fmt.Errorf("key length should be %v byte, got: %v byte", grain.KeyGrainBitLength/8, len(kGrain))
+	}
+
 	// Generate random salt and nonce.
 	salt, err := utils.RandomBytes(SaltSize)
 	if err != nil {
