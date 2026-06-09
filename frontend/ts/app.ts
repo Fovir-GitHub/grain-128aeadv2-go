@@ -1,4 +1,5 @@
 import { RegisterKeyManagementEvents } from "./key-management.js";
+import { RegisterNonceManagementEvents } from "./nonce-management.js";
 
 async function loadComponent(id: string, file: string) {
   const res = await fetch(file);
@@ -20,6 +21,7 @@ async function main() {
   );
 
   RegisterKeyManagementEvents();
+  RegisterNonceManagementEvents();
 }
 
 main();
