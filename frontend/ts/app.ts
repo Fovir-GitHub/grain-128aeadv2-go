@@ -14,6 +14,11 @@ async function main() {
     "components/key-management.html",
   );
 
+  await loadComponent(
+    "nonce-management",
+    "components/nonce-management.html",
+  );
+
   RegisterKeyManagementEvents();
 }
 
