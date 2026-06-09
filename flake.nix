@@ -19,6 +19,7 @@
         gotools
         govulncheck
         just
+        prettier
         typescript
       ];
 
