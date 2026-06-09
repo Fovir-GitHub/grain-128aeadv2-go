@@ -1,6 +1,7 @@
 package keys
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -91,8 +92,18 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 	return a.Auth(kWrap, k.Wrapped, k.Tag)
 }
 
+// Encode marshals the key to JSON format and encodes using base64.
 func (k *Keys) Encode(w io.Writer) error {
-	return json.NewEncoder(w).Encode(k)
+	// Marshal JSON.
+	b, err := json.Marshal(k)
+	if err != nil {
+		return err
+	}
+
+	// base64 encode.
+	encoded := base64.StdEncoding.EncodeToString(b)
+	_, err = fmt.Fprint(w, encoded)
+	return err
 }
 
 func (k *Keys) SaveToFile(path string) error {
