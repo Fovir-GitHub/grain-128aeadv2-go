@@ -56,14 +56,21 @@ func TestKeys_Wrap_Unwrap(t *testing.T) {
 			passphrase: `password`,
 			kGrain:     hexDecode(t, "0000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f00102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f"),
 			ad:         []byte("long kGrain test case"),
-			wantErr:    false,
+			wantErr:    true,
+		},
+		{
+			name:       "Short kGrain",
+			passphrase: `password`,
+			kGrain:     hexDecode(t, "00010203040506070809"),
+			ad:         []byte("long kGrain test case"),
+			wantErr:    true,
 		},
 		{
 			name:       "Long Passphrase and kGrain",
 			passphrase: `iRtP_ucM<tiYzK-rMk,Fnjfdtb.V55k374JNy5\\y5:si5?Wi7*v7>3sD,h:RciMZvDqjPF<LyPd:Xf;zAorJHFvJCziUw/NX<;H5;Da\o5=TPT9R7ANhphcNhqF*-r/`,
 			kGrain:     hexDecode(t, "0000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f00102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f"),
 			ad:         []byte("long kGrain test case"),
-			wantErr:    false,
+			wantErr:    true,
 		},
 	}
 	for _, tt := range tests {
