@@ -1,7 +1,7 @@
 package model
 
 type EncryptionRequest struct {
-	Plaintext      string `json:"input"`
+	Plaintext      string `json:"plaintext"`
 	IsPlaintextHex bool   `json:"isInputHex"`
 	Nonce          string `json:"nonce"`
 	Key            string `json:"key"`
