@@ -1,18 +1,11 @@
-// Generate a random 128-bit (16 bytes) key.
-function generateKey(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
+import { GenerateHex } from "./utils.js";
 
 // Handle the click event on `Generate Key` button.
 function handleGenerateKeyClick() {
   const input = document.getElementById(
     "key-management-key-input",
   ) as HTMLInputElement;
-  const key = "0x" + generateKey();
+  const key = "0x" + GenerateHex(16);
   input.value = key;
 }
 
