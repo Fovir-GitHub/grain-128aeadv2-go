@@ -14,7 +14,7 @@ func (h *Handler) handleEncryption(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.srv.Encryption.Encrypt(&req)
+	resp, err := h.srv.Cipher.Encrypt(&req)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return

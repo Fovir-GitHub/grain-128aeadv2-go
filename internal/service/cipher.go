@@ -10,13 +10,13 @@ import (
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
 )
 
-type EncryptionService struct{}
+type CipherService struct{}
 
-func newEncryptionService() *EncryptionService {
-	return &EncryptionService{}
+func newCipherService() *CipherService {
+	return &CipherService{}
 }
 
-func (e *EncryptionService) Encrypt(req *model.EncryptionRequest) (*model.EncryptionResp, error) {
+func (c *CipherService) Encrypt(req *model.EncryptionRequest) (*model.EncryptionResp, error) {
 	// Trim space around key and nonce.
 	req.Key = strings.TrimSpace(req.Key)
 	req.Nonce = strings.TrimSpace(req.Nonce)

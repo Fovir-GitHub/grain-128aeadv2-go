@@ -7,7 +7,7 @@ import (
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/service"
 )
 
-func TestEncryptionService_Encrypt(t *testing.T) {
+func TestCipherService_Encrypt(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
@@ -333,7 +333,7 @@ func TestEncryptionService_Encrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var e service.EncryptionService
+			var e service.CipherService
 			got, gotErr := e.Encrypt(tt.req)
 			if gotErr != nil {
 				if !tt.wantErr {
