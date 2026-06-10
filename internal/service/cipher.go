@@ -65,3 +65,52 @@ func (c *CipherService) Encrypt(req *model.EncryptionRequest) (*model.Encryption
 		InitNFSR:   initNFSR,
 	}, nil
 }
+
+func (c *CipherService) Decrypt(req *model.DecryptionRequest) (*model.DecryptionResp, error) {
+	const nonceByteLength = grain.NonceBitLength / 8
+
+	// Trim spaces around key and ciphertext.
+	req.NonceCiphertext = strings.TrimSpace(req.NonceCiphertext)
+	req.Key = strings.TrimSpace(req.Key)
+
+	// Transform ciphertext and key from hex to bytes.
+	nonceCiphertext, err := utils.Hex2Byte(req.NonceCiphertext)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex ciphertext: %v", req.NonceCiphertext)
+	}
+
+	kGrain, err := utils.Hex2Byte(req.Key)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex key: %v", req.Key)
+	}
+
+	// Check ciphertext and key length.
+	if len(nonceCiphertext) < nonceByteLength {
+		return nil, fmt.Errorf("invalid ciphertext: too short")
+	}
+
+	// Extract nonce and ciphertext.
+	nonce := nonceCiphertext[:nonceByteLength]
+	ciphertext := nonceCiphertext[nonceByteLength:]
+
+	// Create `Grain128AEADV2` using key and nonce.
+	g, err := grain.New(kGrain, nonce)
+	if err != nil {
+		return nil, fmt.Errorf("create Grain128AEADV2 failed: %w", err)
+	}
+
+	// Get states of LFSR, NFSR, and decrypt ciphertext.
+	loadedLFSR, loadedNFSR, initLFSR, initNFSR := g.Init()
+	plaintextByte := g.Decrypt(ciphertext)
+
+	// Encode plaintext to hex.
+	plaintext := hex.EncodeToString(plaintextByte)
+
+	return &model.DecryptionResp{
+		Plaintext:  plaintext,
+		LoadedLFSR: loadedLFSR,
+		LoadedNFSR: loadedNFSR,
+		InitLFSR:   initLFSR,
+		InitNFSR:   initNFSR,
+	}, nil
+}

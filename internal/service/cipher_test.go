@@ -359,3 +359,239 @@ func TestCipherService_Encrypt(t *testing.T) {
 		})
 	}
 }
+
+func TestCipherService_Decrypt(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *model.DecryptionRequest
+		want    *model.DecryptionResp
+		wantErr bool
+	}{
+		{
+			name: "Decrypt Vector 1",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "00000000000000000000000063e8825e421ddf0c8b946503f5cd614e71a3ab1aa541f8602685e7e561549a3c243bdcaa41d89a493806e31e8b4a1aea28a7cd38be4d11e4ac9be82f7cfb9bb0509e3f0a5c8da188b957ca065a16ec30962ac25608f6b6c66fd359134a55aff5944daee2a53b3a6f45d296b64cd1112c1d84673abc252e819eda441c195427f6f1dff47e633b14cb41d961765cbc895c0274",
+				Key:             "0x00000000000000000000000000000000",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "54686973206973206120746f702d736563726574206d6573736167652e20596f757220696d706c656d656e746174696f6e2073686f756c642062652061626c6520746f2068616e646c65207661726961626c65206c656e67746820696e707574206d657373616765732c20616e642074686520696e707574732073686f756c64206e6f742062652068617264636f6465642e",
+				LoadedLFSR: "000000000000000000000000ffffff7f",
+				LoadedNFSR: "00000000000000000000000000000000",
+				InitLFSR:   "8f395a9421b0963364e2ed30679c8ee1",
+				InitNFSR:   "81f7e0c655d035823310c278438dbc20",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Decrypt Vector 2",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Decrypt Empty Plaintext",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0b",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Key without Prefix",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "000102030405060708090a0b0c0d0e0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Uppercase Key",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "0x000102030405060708090A0B0C0D0E0F",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Mix-case Key",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "0x000102030405060708090A0b0C0d0E0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Key with Surrounding Spaces",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "  0x000102030405060708090a0b0c0d0e0f  ",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Ciphertext with Surrounding Spaces",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "  000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d  ",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "5465737420706c61696e7465787420666f7220766563746f722032",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Empty Key",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Empty Ciphertext",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Empty Key and Ciphertext",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "",
+				Key:             "",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Ciphertext Too Short (only nonce, no ciphertext)",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0b",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want: &model.DecryptionResp{
+				Plaintext:  "",
+				LoadedLFSR: "000102030405060708090a0bffffff7f",
+				LoadedNFSR: "000102030405060708090a0b0c0d0e0f",
+				InitLFSR:   "0e1f950d45e05087c4cd63fd00eab310",
+				InitNFSR:   "b3c2e1b1eec1f08c2d6eae957f6af9d0",
+			},
+			wantErr: false,
+		},
+		{
+			name: "Ciphertext Too Short (less than nonce length)",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Invalid Hex Ciphertext",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bgg4415f1",
+				Key:             "0x000102030405060708090a0b0c0d0e0f",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Invalid Hex Key",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "0x000102030405060708090a0b0c0d0e0g",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "Invalid Key Length",
+			req: &model.DecryptionRequest{
+				NonceCiphertext: "000102030405060708090a0bbe4415f1258fe3d158f8a4dadcde3490d2f2944f84e9e2e2db5e8d",
+				Key:             "0x000102030405060708090a0b0c0d0e0fab",
+			},
+			want:    nil,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var c service.CipherService
+			got, gotErr := c.Decrypt(tt.req)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Decrypt() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Decrypt() succeeded unexpectedly")
+			}
+
+			checkField := func(name string, got, want any) {
+				if got != want {
+					t.Errorf("%s: Decrypt() = %v, want %v", name, got, want)
+				}
+			}
+
+			checkField("Plaintext", got.Plaintext, tt.want.Plaintext)
+			checkField("LoadedLFSR", got.LoadedLFSR, tt.want.LoadedLFSR)
+			checkField("LoadedNFSR", got.LoadedNFSR, tt.want.LoadedNFSR)
+			checkField("InitLFSR", got.InitLFSR, tt.want.InitLFSR)
+			checkField("InitNFSR", got.InitNFSR, tt.want.InitNFSR)
+		})
+	}
+}
