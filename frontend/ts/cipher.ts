@@ -1,7 +1,12 @@
-import { DownloadBlobFile, ReadTextFileContent } from "./utils.js";
+import {
+  DownloadBlobFile,
+  Hex2String,
+  ReadTextFileContent,
+} from "./utils.js";
 
 export function RegisterCipherEvents() {
   registerEncryptClick();
+  registerDecryptClick();
   registerPlaintextUploadChange();
   registerSaveEncFileClick();
 }
@@ -112,4 +117,45 @@ function registerSaveEncFileClick() {
     "cipher-save-enc-file",
   ) as HTMLButtonElement;
   btn.addEventListener("click", handleSaveEncFileClick);
+}
+
+async function handleDecryptClick() {
+  const getInputValueById = (id: string) => {
+    return (document.getElementById(id) as HTMLInputElement).value;
+  };
+
+  const key = getInputValueById("key-management-key-input");
+  const ciphertext = getInputValueById("cipher-input");
+
+  const resp = await fetch("/api/decrypt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key, ciphertext }),
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    alert(err.msg);
+    return;
+  }
+
+  const content = await resp.json();
+  const plaintext = content.output;
+  const loadedLFSR = content.loadedLFSR;
+  const loadedNFSR = content.loadedNFSR;
+  const initLFSR = content.initLFSR;
+  const initNFSR = content.initNFSR;
+  const plaintextOutputText = document.getElementById(
+    "cipher-plaintext-output-text",
+  ) as HTMLInputElement;
+  plaintextOutputText.value = Hex2String(plaintext);
+
+  updateResult(plaintext, loadedLFSR, loadedNFSR, initLFSR, initNFSR);
+}
+
+function registerDecryptClick() {
+  const btn = document.getElementById(
+    "cipher-decrypt",
+  ) as HTMLButtonElement;
+  btn.addEventListener("click", handleDecryptClick);
 }
