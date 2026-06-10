@@ -17,7 +17,8 @@ func New(srv *service.Service) *Handler {
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/wrap-key", h.handleWrapKey)
-	mux.HandleFunc("/api/encrypt", h.handleEncryption)
+	mux.HandleFunc("/api/encrypt", h.handleCipher(true))
+	mux.HandleFunc("/api/decrypt", h.handleCipher(false))
 }
 
 func writeError(w http.ResponseWriter, status int, msg string) {
