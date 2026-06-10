@@ -1,6 +1,9 @@
 package service
 
 import (
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/keys"
@@ -40,4 +43,31 @@ func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*keys.Keys, e
 	}
 
 	return k, nil
+}
+
+func (s *KeyManagementService) UnwrapKey(req *model.UnwrapKeyRequest) (*model.UnwrapKeyResp, error) {
+	// Decode base64 content.
+	jsonByte, err := base64.StdEncoding.DecodeString(req.Base64Content)
+	if err != nil {
+		return nil, fmt.Errorf("invalid file content: %w", err)
+	}
+
+	// Unmarshal the json into `keys.Keys`.
+	var k keys.Keys
+	if err := json.Unmarshal(jsonByte, &k); err != nil {
+		return nil, fmt.Errorf("invalid json format: %w", err)
+	}
+
+	// Unwrap `k` to obtain `kGrain` and auth the data.
+	kGrain, err := k.Unwrap(req.Passphrase, []byte(req.AD))
+	if err != nil {
+		return nil, fmt.Errorf("authentication failed: %w", err)
+	}
+
+	// Transform kGrain into hex format.
+	key := hex.EncodeToString(kGrain)
+
+	return &model.UnwrapKeyResp{
+		Key: key,
+	}, nil
 }
