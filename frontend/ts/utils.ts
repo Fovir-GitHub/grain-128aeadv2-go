@@ -6,3 +6,13 @@ export function GenerateHex(byte: number): string {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
+
+export async function ReadTextFileContent(
+  input: HTMLInputElement,
+): Promise<string> {
+  const file = input.files?.[0];
+  if (!file) {
+    throw new Error("no file selected");
+  }
+  return await file.text();
+}
