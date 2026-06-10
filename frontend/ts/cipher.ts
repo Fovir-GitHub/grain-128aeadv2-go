@@ -9,6 +9,7 @@ export function RegisterCipherEvents() {
   registerDecryptClick();
   registerPlaintextUploadChange();
   registerSaveEncFileClick();
+  registerEncFileUploadChange();
 }
 
 async function handleEncryptClick() {
@@ -158,4 +159,23 @@ function registerDecryptClick() {
     "cipher-decrypt",
   ) as HTMLButtonElement;
   btn.addEventListener("click", handleDecryptClick);
+}
+
+async function handleEncFileUpload() {
+  const input = document.getElementById(
+    "cipher-load-enc-file",
+  ) as HTMLInputElement;
+  const cipehrtextInput = document.getElementById(
+    "cipher-input",
+  ) as HTMLInputElement;
+
+  const ciphertext = await ReadTextFileContent(input);
+  cipehrtextInput.value = ciphertext;
+}
+
+function registerEncFileUploadChange() {
+  const input = document.getElementById(
+    "cipher-load-enc-file",
+  ) as HTMLInputElement;
+  input.addEventListener("change", handleEncFileUpload);
 }
