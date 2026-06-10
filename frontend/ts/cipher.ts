@@ -1,8 +1,9 @@
-import { ReadTextFileContent } from "./utils.js";
+import { DownloadBlobFile, ReadTextFileContent } from "./utils.js";
 
 export function RegisterCipherEvents() {
   registerEncryptClick();
   registerPlaintextUploadChange();
+  registerSaveEncFileClick();
 }
 
 async function handleEncryptClick() {
@@ -90,4 +91,25 @@ function registerPlaintextUploadChange() {
   ) as HTMLInputElement;
 
   input.addEventListener("change", handlePlaintextFileUpload);
+}
+
+function handleSaveEncFileClick() {
+  const input = document.getElementById(
+    "cipher-output",
+  ) as HTMLInputElement;
+  const content = input.value;
+  if (!content) {
+    alert("Empty output");
+    return;
+  }
+
+  const blob = new Blob([content], { type: "text/plain" });
+  DownloadBlobFile(blob, "ciphertext.enc");
+}
+
+function registerSaveEncFileClick() {
+  const btn = document.getElementById(
+    "cipher-save-enc-file",
+  ) as HTMLButtonElement;
+  btn.addEventListener("click", handleSaveEncFileClick);
 }
