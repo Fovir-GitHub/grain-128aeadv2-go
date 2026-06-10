@@ -1,5 +1,8 @@
+import { ReadTextFileContent } from "./utils.js";
+
 export function RegisterCipherEvents() {
   registerEncryptClick();
+  registerPlaintextUploadChange();
 }
 
 async function handleEncryptClick() {
@@ -67,4 +70,24 @@ function updateResult(
   for (const [k, v] of idContentMap) {
     updateLiContent(k, v);
   }
+}
+
+async function handlePlaintextFileUpload() {
+  const input = document.getElementById(
+    "cipher-plaintext-file",
+  ) as HTMLInputElement;
+  const plaintextInput = document.getElementById(
+    "cipher-input",
+  ) as HTMLInputElement;
+
+  const plaintext = await ReadTextFileContent(input);
+  plaintextInput.value = plaintext;
+}
+
+function registerPlaintextUploadChange() {
+  const input = document.getElementById(
+    "cipher-plaintext-file",
+  ) as HTMLInputElement;
+
+  input.addEventListener("change", handlePlaintextFileUpload);
 }
