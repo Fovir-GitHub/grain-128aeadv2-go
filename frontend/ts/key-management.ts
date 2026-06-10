@@ -1,4 +1,4 @@
-import { GenerateHex } from "./utils.js";
+import { DownloadBlobFile, GenerateHex } from "./utils.js";
 
 // Handle the click event on `Generate Key` button.
 function handleGenerateKeyClick() {
@@ -41,14 +41,7 @@ async function handleWrapSaveKeyClick() {
 
   // Create blob and download it.
   const blob = await resp.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "wrapped.key";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  DownloadBlobFile(blob, "wrapped.key");
 }
 
 function registerGenerateKeyClick() {
