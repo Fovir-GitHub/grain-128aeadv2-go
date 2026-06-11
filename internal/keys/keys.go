@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/grain"
@@ -99,17 +98,16 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 }
 
 // Encode marshals the key to JSON format and encodes using base64.
-func (k *Keys) Encode(w io.Writer) error {
+func (k *Keys) Encode() (string, error) {
 	// Marshal JSON.
 	b, err := json.Marshal(k)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// base64 encode.
 	encoded := base64.StdEncoding.EncodeToString(b)
-	_, err = fmt.Fprint(w, encoded)
-	return err
+	return encoded, nil
 }
 
 func (k *Keys) SaveToFile(path string) error {
