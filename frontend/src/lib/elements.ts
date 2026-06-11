@@ -27,6 +27,18 @@ export function setPassword(p: string) {
   els.password.value = p;
 }
 
+export function getAD(): string {
+  return els.ad.value;
+}
+
+export function setAD(a: string) {
+  els.ad.value = a;
+}
+
+export function isADHex(): boolean {
+  return els.adHex.checked;
+}
+
 function getInputElementById(id: string): HTMLInputElement {
   return document.getElementById(id) as HTMLInputElement;
 }
