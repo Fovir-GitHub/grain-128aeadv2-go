@@ -14,7 +14,7 @@ export const els = {
   generateIVButton: getButtonElementById(
     "nonce-management-generate-key",
   ),
-  cipherInput: getInputElementById("cipher-input"),
+  cipherInput: getTextAreaElementById("cipher-input"),
   cipherInputHex: getInputElementById("cipher-input-mode-hex"),
   cipherOutput: getTextAreaElementById("cipher-output"),
   loadedLFSR: getTextAreaElementById("cipher-loaded-lfsr"),
