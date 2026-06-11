@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Grain-128AEADv2</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
     <script defer type="module" src="/js/main.js"></script>
     <meta
       name="viewport"
@@ -9,34 +10,55 @@
     />
   </head>
   <body>
+    <header class="app-header">
+      <h1>Grain-128AEADv2</h1>
+      <p class="subtitle">
+        Authenticated Encryption &mdash; Interactive Tool
+      </p>
+    </header>
+
     <main>
-      <div id="key-management">
+      <div id="key-management" class="card">
         <h2>Key Management</h2>
-        <div>
+        <div class="row">
           <label for="key-management-key-input"
             >Hex Key Input (K<sub>Grain</sub>)</label
           >
-          <input id="key-management-key-input" type="text" />
-          <button id="key-management-generate-key">Generate Key</button>
+          <input
+            id="key-management-key-input"
+            class="mono"
+            type="text"
+          />
+          <button id="key-management-generate-key" class="btn">
+            Generate Key
+          </button>
         </div>
+        <div class="divider"></div>
         <div>
-          <h3>Key Wrapping & Storage</h3>
-          <div>
-            <label for="key-management-password"
-              >Password for Wrapping</label
-            >
-            <input type="password" id="key-management-password" />
+          <h3>Key Wrapping &amp; Storage</h3>
+          <div class="key-fields mb">
+            <div class="col">
+              <label for="key-management-password"
+                >Password for Wrapping</label
+              >
+              <input type="password" id="key-management-password" />
+            </div>
+            <div class="col">
+              <label for="key-management-ad"
+                >Associated Data (AD)</label
+              >
+              <input
+                id="key-management-ad"
+                class="mono"
+                type="text"
+                placeholder="e.g. CYS1234567"
+              />
+            </div>
           </div>
-          <div>
-            <label for="key-management-ad">Associated Data (AD)</label>
-            <input
-              id="key-management-ad"
-              type="text"
-              placeholder="e.g. CYS1234567"
-            />
-            <form>
-              <fieldset id="key-management-input-mode">
-                <legend>Input Mode:</legend>
+          <form class="mb">
+            <fieldset id="key-management-input-mode">
+              <legend>Input Mode:</legend>
+              <div class="radio-group">
                 <label for="key-management-input-mode-hex"
                   ><input
                     type="radio"
@@ -54,12 +76,15 @@
                     value="text"
                   />Text</label
                 >
-              </fieldset>
-            </form>
-          </div>
-          <div>
-            <button id="key-management-wrap-save-key">
-              Wrap & Save .key File
+              </div>
+            </fieldset>
+          </form>
+          <div class="row gap-sm">
+            <button
+              id="key-management-wrap-save-key"
+              class="btn btn-primary"
+            >
+              Wrap &amp; Save .key File
             </button>
             <label for="key-management-load-key-file"
               >Load .key File</label
@@ -68,106 +93,154 @@
           </div>
         </div>
       </div>
-      <div id="nonce-management">
-        <h2>Nonce/IV Managemnet (96-bit, V<sub>Grain</sub>)</h2>
-        <div>
+
+      <div id="nonce-management" class="card">
+        <h2>Nonce/IV Management (96-bit, V<sub>Grain</sub>)</h2>
+        <div class="row">
           <label for="nonce-management-input"
             >Hex Nonce Input (V<sub>Grain</sub>)</label
           >
-          <input type="text" id="nonce-management-input" />
-          <button id="nonce-management-generate-key">
+          <input type="text" class="mono" id="nonce-management-input" />
+          <button id="nonce-management-generate-key" class="btn">
             Generate IV
           </button>
           <input type="checkbox" id="nonce-management-auto-generate" />
-          <label for="nonce-management-auto-generate"
+          <label
+            class="checkbox-label"
+            for="nonce-management-auto-generate"
             >Automatically generate unique IV</label
           >
         </div>
       </div>
-      <div id="cipher">
-        <h2>Encryption & Decryption Workflows</h2>
-        <div>
+
+      <div id="cipher" class="card">
+        <h2>Encryption &amp; Decryption Workflows</h2>
+        <div class="mb">
           <label for="cipher-input">Manual Input</label>
-          <input type="text" id="cipher-input" />
-          <fieldset id="cipher-input-mode">
+          <textarea class="mono" id="cipher-input"></textarea>
+          <fieldset id="cipher-input-mode" class="mb">
             <legend>Input Mode:</legend>
-            <label for="cipher-input-mode-hex">
-              <input
-                type="radio"
-                id="cipher-input-mode-hex"
-                name="cipher-input-mode"
-                value="hex"
-                checked
-              />
-              HEX
-            </label>
-            <label for="cipher-input-mode-text">
-              <input
-                type="radio"
-                id="cipher-input-mode-text"
-                name="cipher-input-mode"
-                value="text"
-              />
-              Text
-            </label>
+            <div class="radio-group">
+              <label for="cipher-input-mode-hex">
+                <input
+                  type="radio"
+                  id="cipher-input-mode-hex"
+                  name="cipher-input-mode"
+                  value="hex"
+                  checked
+                />
+                HEX
+              </label>
+              <label for="cipher-input-mode-text">
+                <input
+                  type="radio"
+                  id="cipher-input-mode-text"
+                  name="cipher-input-mode"
+                  value="text"
+                />
+                Text
+              </label>
+            </div>
           </fieldset>
-          <button type="button" id="cipher-encrypt">Encrypt</button>
-          <button type="button" id="cipher-decrypt">Decrypt</button>
-          <input
-            type="file"
-            id="cipher-plaintext-file"
-            placeholder="test"
-          />
+          <div class="cipher-actions">
+            <button
+              type="button"
+              id="cipher-encrypt"
+              class="btn btn-primary"
+            >
+              Encrypt
+            </button>
+            <button
+              type="button"
+              id="cipher-decrypt"
+              class="btn btn-danger"
+            >
+              Decrypt
+            </button>
+            <span class="spacer"></span>
+            <label for="cipher-plaintext-file"
+              >Load Plaintext File</label
+            >
+            <input type="file" id="cipher-plaintext-file" />
+          </div>
         </div>
 
-        <div>
-          <label for="cipher-output">Output</label>
-          <textarea id="cipher-output" rows="10" readonly></textarea>
-          <button type="button" id="cipher-save-enc-file">
-            Save .enc File
-          </button>
-          <label for="cipher-load-enc-file">Load .enc File</label>
-          <input type="file" id="cipher-load-enc-file" />
-          <label for="cipher-plaintext-output-text"
-            >Plaintext Output (Text)</label
-          >
-          <textarea
-            id="cipher-plaintext-output-text"
-            rows="10"
-            readonly
-          ></textarea>
+        <div class="divider"></div>
+
+        <div class="cipher-outputs mb">
+          <div class="col">
+            <label for="cipher-output">Ciphertext Output</label>
+            <textarea
+              id="cipher-output"
+              class="mono"
+              rows="8"
+              readonly
+            ></textarea>
+            <div class="row gap-sm">
+              <button
+                type="button"
+                id="cipher-save-enc-file"
+                class="btn btn-success"
+              >
+                Save .enc File
+              </button>
+              <label for="cipher-load-enc-file">Load .enc File</label>
+              <input type="file" id="cipher-load-enc-file" />
+            </div>
+          </div>
+          <div class="col">
+            <label for="cipher-plaintext-output-text"
+              >Plaintext Output (Text)</label
+            >
+            <textarea
+              id="cipher-plaintext-output-text"
+              class="mono"
+              rows="8"
+              readonly
+            ></textarea>
+          </div>
         </div>
-        <div>
-          <label for="cipher-loaded-lfsr">Loaded LFSR</label>
-          <textarea
-            type="text"
-            id="cipher-loaded-lfsr"
-            readonly
-          ></textarea>
-        </div>
-        <div>
-          <label for="cipher-loaded-nfsr">Loaded NFSR</label>
-          <textarea
-            type="text"
-            id="cipher-loaded-nfsr"
-            readonly
-          ></textarea>
-        </div>
-        <div>
-          <label for="cipher-init-lfsr">Init LFSR</label>
-          <textarea
-            type="text"
-            id="cipher-init-lfsr"
-            readonly
-          ></textarea>
-        </div>
-        <div>
-          <label for="cipher-init-nfsr">Init NFSR</label>
-          <textarea
-            type="text"
-            id="cipher-init-nfsr"
-            readonly
-          ></textarea>
+
+        <div class="divider"></div>
+
+        <h3>LFSR &amp; NFSR States</h3>
+        <div class="cipher-states">
+          <div class="col">
+            <label for="cipher-loaded-lfsr">Loaded LFSR</label>
+            <textarea
+              id="cipher-loaded-lfsr"
+              class="mono"
+              rows="1"
+              readonly
+            ></textarea>
+          </div>
+          <div class="col">
+            <label for="cipher-loaded-nfsr">Loaded NFSR</label>
+            <textarea
+              id="cipher-loaded-nfsr"
+              class="mono"
+              rows="1"
+              readonly
+            ></textarea>
+          </div>
+          <div class="col">
+            <label for="cipher-init-lfsr">Init LFSR</label>
+            <textarea
+              id="cipher-init-lfsr"
+              class="mono"
+              rows="1"
+              readonly
+            ></textarea>
+          </div>
+          <div class="col">
+            <label for="cipher-init-nfsr">Init NFSR</label>
+            <textarea
+              id="cipher-init-nfsr"
+              class="mono"
+              rows="1"
+              readonly
+            ></textarea>
+          </div>
         </div>
       </div>
     </main>
