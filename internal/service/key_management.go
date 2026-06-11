@@ -17,7 +17,7 @@ func newKeyManagement() *KeyManagementService {
 	return &KeyManagementService{}
 }
 
-func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*keys.Keys, error) {
+func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*model.WrapKeyResp, error) {
 	// Parse kGrain and AD.
 	var adBytes []byte
 	var kGrainBytes []byte
@@ -42,7 +42,14 @@ func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*keys.Keys, e
 		return nil, fmt.Errorf("wrap key failed: %w", err)
 	}
 
-	return k, nil
+	encoded, err := k.Encode()
+	if err != nil {
+		return nil, fmt.Errorf("encode key failed: %w", err)
+	}
+
+	return &model.WrapKeyResp{
+		Key: encoded,
+	}, nil
 }
 
 func (s *KeyManagementService) UnwrapKey(req *model.UnwrapKeyRequest) (*model.UnwrapKeyResp, error) {
