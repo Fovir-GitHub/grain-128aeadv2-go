@@ -10,6 +10,10 @@ export const els = {
     "key-management-wrap-save-key",
   ),
   loadKeyFile: getInputElementById("key-management-load-key-file"),
+  nonce: getInputElementById("nonce-management-input"),
+  generateIVButton: getButtonElementById(
+    "nonce-management-generate-key",
+  ),
 };
 
 export function getKey(): string {
@@ -38,6 +42,14 @@ export function setAD(a: string) {
 
 export function isADHex(): boolean {
   return els.adHex.checked;
+}
+
+export function getNonce(): string {
+  return els.nonce.value;
+}
+
+export function setNonce(n: string) {
+  els.nonce.value = n;
 }
 
 function getInputElementById(id: string): HTMLInputElement {
