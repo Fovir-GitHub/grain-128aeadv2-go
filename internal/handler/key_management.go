@@ -7,40 +7,34 @@ import (
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
 )
 
-func (h *Handler) handleWrapKey(w http.ResponseWriter, r *http.Request) {
-	var req model.WrapKeyRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid request")
-		return
-	}
+func (h *Handler) handleKeyManagement(isWrap bool) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var resp any
+		var err error
 
-	k, err := h.srv.KeyManagement.WrapKey(&req)
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+		if isWrap {
+			var req model.WrapKeyRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				writeError(w, http.StatusBadRequest, "invalid request")
+				return
+			}
+			resp, err = h.srv.KeyManagement.WrapKey(&req)
+		} else {
+			var req model.UnwrapKeyRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				writeError(w, http.StatusBadRequest, "invalid request")
+				return
+			}
+			resp, err = h.srv.KeyManagement.UnwrapKey(&req)
+		}
 
-	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", `attachment; filename="wrapped.key"`)
-	if err := k.Encode(w); err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-	}
-}
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
 
-func (h *Handler) handleUnwrapKey(w http.ResponseWriter, r *http.Request) {
-	var req model.UnwrapKeyRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid request")
-		return
-	}
-
-	resp, err := h.srv.KeyManagement.UnwrapKey(&req)
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if err := writeJSON(w, http.StatusOK, resp); err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		if err := writeJSON(w, http.StatusOK, resp); err != nil {
+			writeError(w, http.StatusInternalServerError, err.Error())
+		}
 	}
 }
