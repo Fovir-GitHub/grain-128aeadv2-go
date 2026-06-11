@@ -33,4 +33,5 @@ go.work.sum
 # .idea/
 # .vscode/
 
-frontend/js/
+frontend/js/*
+!frontend/js/index.min.js
