@@ -27,6 +27,7 @@ export function RegisterCipherEvents() {
   onClick(els.decryptButton, handleDecrypt);
   onChange(els.loadPlaintextFile, handleLoadPlaintextFile);
   onClick(els.saveEncFileButton, handleSaveEncFile);
+  onChange(els.loadEncFile, handleLoadEncFile);
 }
 
 async function handleEncrypt() {
@@ -71,4 +72,9 @@ async function handleDecrypt() {
   setInitLFSR(data.initLFSR);
   setInitNFSR(data.initNFSR);
   setPlaintextOutputText(hex2string(data.output));
+}
+
+async function handleLoadEncFile() {
+  const ciphertext = await readTextFileContent(els.loadEncFile);
+  setCipherInput(ciphertext);
 }
