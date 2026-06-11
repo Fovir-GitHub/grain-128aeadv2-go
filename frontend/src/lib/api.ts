@@ -1,4 +1,6 @@
 import type {
+  DecryptionRequest,
+  DecryptionResp,
   EncryptionRequest,
   EncryptionResp,
   UnwrapKeyRequest,
@@ -21,6 +23,12 @@ export function encrypt(
   req: EncryptionRequest,
 ): Promise<EncryptionResp> {
   return post("/api/encrypt", req);
+}
+
+export function decrypt(
+  req: DecryptionRequest,
+): Promise<DecryptionResp> {
+  return post("/api/decrypt", req);
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {

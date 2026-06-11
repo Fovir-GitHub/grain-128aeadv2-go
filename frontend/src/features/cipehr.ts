@@ -1,4 +1,4 @@
-import { encrypt } from "../lib/api.js";
+import { decrypt, encrypt } from "../lib/api.js";
 import { onChange, onClick } from "../lib/dom.js";
 import {
   els,
@@ -13,15 +13,18 @@ import {
   setInitNFSR,
   setLoadedLFSR,
   setLoadedNFSR,
+  setPlaintextOutputText,
 } from "../lib/elements.js";
 import {
   createBlobWithFileContent,
   downloadBlobFile,
+  hex2string,
   readTextFileContent,
 } from "../lib/utils.js";
 
 export function RegisterCipherEvents() {
   onClick(els.encryptButton, handleEncrypt);
+  onClick(els.decryptButton, handleDecrypt);
   onChange(els.loadEncFile, handleLoadEncFile);
   onClick(els.saveEncFileButton, handleSaveEncFile);
 }
@@ -54,4 +57,18 @@ function handleSaveEncFile() {
   }
   const blob = createBlobWithFileContent(ciphertext);
   downloadBlobFile(blob, "ciphertext.enc");
+}
+
+async function handleDecrypt() {
+  const data = await decrypt({
+    key: getKey(),
+    ciphertext: getCipherInput(),
+  });
+
+  setCipherOutput(data.output);
+  setLoadedLFSR(data.loadedLFSR);
+  setLoadedNFSR(data.loadedNFSR);
+  setInitLFSR(data.initLFSR);
+  setInitNFSR(data.initNFSR);
+  setPlaintextOutputText(hex2string(data.output));
 }

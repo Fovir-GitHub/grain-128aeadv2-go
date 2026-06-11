@@ -22,8 +22,12 @@ export const els = {
   initLFSR: getTextAreaElementById("cipher-init-lfsr"),
   initNFSR: getTextAreaElementById("cipher-init-nfsr"),
   encryptButton: getButtonElementById("cipher-encrypt"),
+  decryptButton: getButtonElementById("cipher-decrypt"),
   saveEncFileButton: getButtonElementById("cipher-save-enc-file"),
   loadEncFile: getInputElementById("cipher-plaintext-file"),
+  plaintextOutputText: getTextAreaElementById(
+    "cipher-plaintext-output-text",
+  ),
 };
 
 export function getKey(): string {
@@ -96,6 +100,10 @@ export function setInitLFSR(il: string) {
 
 export function setInitNFSR(_in: string) {
   els.initNFSR.value = _in;
+}
+
+export function setPlaintextOutputText(pot: string) {
+  els.plaintextOutputText.value = pot;
 }
 
 function getInputElementById(id: string): HTMLInputElement {
