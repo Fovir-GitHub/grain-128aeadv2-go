@@ -20,6 +20,7 @@
         govulncheck
         just
         prettier
+        tygo
         typescript
       ];
 

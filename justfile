@@ -14,3 +14,8 @@ test:
 v-test:
   # Run verbose testing.
   go test ./... -v
+
+gen:
+  # Run code generation.
+  tsc
+  tygo generate

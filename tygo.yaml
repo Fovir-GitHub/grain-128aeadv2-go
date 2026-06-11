@@ -1,0 +1,3 @@
+packages:
+  - path: "github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
+    output_path: "frontend/src/types/schema.ts"
