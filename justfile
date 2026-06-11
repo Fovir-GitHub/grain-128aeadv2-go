@@ -1,6 +1,6 @@
 run:
   # Start the app
-  tsc
+  just esbuild
   go run main.go
 
 lint:
@@ -17,5 +17,8 @@ v-test:
 
 gen:
   # Run code generation.
-  tsc
+  just esbuild
   tygo generate
+
+esbuild:
+  esbuild ./frontend/src/main.ts --bundle --minify --outfile=./frontend/js/index.min.js
