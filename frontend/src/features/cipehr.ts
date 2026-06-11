@@ -25,7 +25,7 @@ import {
 export function RegisterCipherEvents() {
   onClick(els.encryptButton, handleEncrypt);
   onClick(els.decryptButton, handleDecrypt);
-  onChange(els.loadEncFile, handleLoadEncFile);
+  onChange(els.loadPlaintextFile, handleLoadPlaintextFile);
   onClick(els.saveEncFileButton, handleSaveEncFile);
 }
 
@@ -44,8 +44,8 @@ async function handleEncrypt() {
   setInitNFSR(data.initNFSR);
 }
 
-async function handleLoadEncFile() {
-  const plaintext = await readTextFileContent(els.loadEncFile);
+async function handleLoadPlaintextFile() {
+  const plaintext = await readTextFileContent(els.loadPlaintextFile);
   setCipherInput(plaintext);
 }
 

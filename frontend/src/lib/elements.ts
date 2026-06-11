@@ -28,6 +28,7 @@ export const els = {
   plaintextOutputText: getTextAreaElementById(
     "cipher-plaintext-output-text",
   ),
+  loadPlaintextFile: getInputElementById("cipher-plaintext-file"),
 };
 
 export function getKey(): string {
