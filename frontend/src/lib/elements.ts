@@ -14,6 +14,14 @@ export const els = {
   generateIVButton: getButtonElementById(
     "nonce-management-generate-key",
   ),
+  cipherInput: getInputElementById("cipher-input"),
+  cipherInputHex: getInputElementById("cipher-input-mode-hex"),
+  cipherOutput: getTextAreaElementById("cipher-output"),
+  loadedLFSR: getTextAreaElementById("cipher-loaded-lfsr"),
+  loadedNFSR: getTextAreaElementById("cipher-loaded-nfsr"),
+  initLFSR: getTextAreaElementById("cipher-init-lfsr"),
+  initNFSR: getTextAreaElementById("cipher-init-nfsr"),
+  encryptButton: getButtonElementById("cipher-encrypt"),
 };
 
 export function getKey(): string {
@@ -52,10 +60,46 @@ export function setNonce(n: string) {
   els.nonce.value = n;
 }
 
+export function getCipherInput(): string {
+  return els.cipherInput.value;
+}
+
+export function setCipherInput(ci: string) {
+  els.cipherInput.value = ci;
+}
+
+export function isCipehrInputHex(): boolean {
+  return els.cipherInputHex.checked;
+}
+
+export function setCipherOutput(co: string) {
+  els.cipherOutput.value = co;
+}
+
+export function setLoadedLFSR(ll: string) {
+  els.loadedLFSR.value = ll;
+}
+
+export function setLoadedNFSR(ln: string) {
+  els.loadedNFSR.value = ln;
+}
+
+export function setInitLFSR(il: string) {
+  els.initLFSR.value = il;
+}
+
+export function setInitNFSR(_in: string) {
+  els.initNFSR.value = _in;
+}
+
 function getInputElementById(id: string): HTMLInputElement {
   return document.getElementById(id) as HTMLInputElement;
 }
 
 function getButtonElementById(id: string): HTMLButtonElement {
   return document.getElementById(id) as HTMLButtonElement;
+}
+
+function getTextAreaElementById(id: string): HTMLTextAreaElement {
+  return document.getElementById(id) as HTMLTextAreaElement;
 }
