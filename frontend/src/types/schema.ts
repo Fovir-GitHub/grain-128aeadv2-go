@@ -48,6 +48,9 @@ export interface UnwrapKeyRequest {
   passphrase: string;
   ad: string;
 }
+export interface WrapKeyResp {
+  key: string;
+}
 export interface UnwrapKeyResp {
   key: string;
 }

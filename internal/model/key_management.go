@@ -13,6 +13,10 @@ type UnwrapKeyRequest struct {
 	AD            string `json:"ad"`
 }
 
+type WrapKeyResp struct {
+	Key string `json:"key"`
+}
+
 type UnwrapKeyResp struct {
 	Key string `json:"key"`
 }
