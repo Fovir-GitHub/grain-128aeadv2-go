@@ -22,6 +22,8 @@ export const els = {
   initLFSR: getTextAreaElementById("cipher-init-lfsr"),
   initNFSR: getTextAreaElementById("cipher-init-nfsr"),
   encryptButton: getButtonElementById("cipher-encrypt"),
+  saveEncFileButton: getButtonElementById("cipher-save-enc-file"),
+  loadEncFile: getInputElementById("cipher-plaintext-file"),
 };
 
 export function getKey(): string {
@@ -70,6 +72,10 @@ export function setCipherInput(ci: string) {
 
 export function isCipehrInputHex(): boolean {
   return els.cipherInputHex.checked;
+}
+
+export function getCipherOutput(): string {
+  return els.cipherOutput.value;
 }
 
 export function setCipherOutput(co: string) {
