@@ -1,5 +1,5 @@
 // Generate a random hex string with a given length in byte.
-export function GenerateHex(byte: number): string {
+export function generateHex(byte: number): string {
   const bytes = new Uint8Array(byte);
   crypto.getRandomValues(bytes);
   return Array.from(bytes)
@@ -7,7 +7,7 @@ export function GenerateHex(byte: number): string {
     .join("");
 }
 
-export async function ReadTextFileContent(
+export async function readTextFileContent(
   input: HTMLInputElement,
 ): Promise<string> {
   const file = input.files?.[0];
@@ -17,7 +17,7 @@ export async function ReadTextFileContent(
   return await file.text();
 }
 
-export function DownloadBlobFile(blob: Blob, filename: string) {
+export function downloadBlobFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -28,7 +28,7 @@ export function DownloadBlobFile(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function Hex2String(hex: string): string {
+export function hex2string(hex: string): string {
   hex = hex.replace(/^0x/, "");
 
   const bytes = new Uint8Array(hex.length / 2);
