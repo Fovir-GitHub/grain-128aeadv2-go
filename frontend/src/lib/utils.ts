@@ -38,3 +38,7 @@ export function Hex2String(hex: string): string {
 
   return new TextDecoder().decode(bytes);
 }
+
+export function createBlobWithFileContent(content: string): Blob {
+  return new Blob([content], { type: "text/plain" });
+}
