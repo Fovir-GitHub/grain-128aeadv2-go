@@ -9,6 +9,7 @@ export const els = {
   wrapSaveKeyButton: getButtonElementById(
     "key-management-wrap-save-key",
   ),
+  loadKeyFile: getInputElementById("key-management-load-key-file"),
 };
 
 export function getKey(): string {
