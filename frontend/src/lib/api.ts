@@ -1,7 +1,18 @@
-import type { WrapKeyRequest, WrapKeyResp } from "../types/schema.js";
+import type {
+  UnwrapKeyRequest,
+  UnwrapKeyResp,
+  WrapKeyRequest,
+  WrapKeyResp,
+} from "../types/schema.js";
 
 export function wrapKey(req: WrapKeyRequest): Promise<WrapKeyResp> {
   return post("/api/wrap-key", req);
+}
+
+export function unwrapKey(
+  req: UnwrapKeyRequest,
+): Promise<UnwrapKeyResp> {
+  return post("/api/unwrap-key", req);
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
