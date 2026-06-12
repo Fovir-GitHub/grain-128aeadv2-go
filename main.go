@@ -2,13 +2,15 @@ package main
 
 import (
 	"embed"
+	"errors"
+	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
 	"runtime"
-	"strconv"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/handler"
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/service"
@@ -17,34 +19,45 @@ import (
 //go:embed frontend/*
 var frontendFS embed.FS
 
-// TODO:
-// - Refactor code
-// - Error handling
 func main() {
 	sub, err := fs.Sub(frontendFS, "frontend")
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("create sub fs failed", "err", err)
+		os.Exit(1)
 	}
 
 	ln, err := net.Listen("tcp", ":0")
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("listen failed", "err", err)
+		os.Exit(1)
 	}
 
-	addr := "http://localhost:" + strconv.Itoa(ln.Addr().(*net.TCPAddr).Port)
-	log.Println(addr)
-	go openBrowser(addr)
+	port := ln.Addr().(*net.TCPAddr).Port
+	addr := fmt.Sprintf("http://localhost:%d", port)
+	slog.Info("starting server", "addr", addr)
+
+	go func() {
+		if err := openBrowser(addr); err != nil {
+			slog.Warn("open browser failed", "err", err)
+		}
+	}()
 
 	mux := http.NewServeMux()
 	srv := service.New()
-	handler := handler.New(srv)
-	handler.Register(mux)
-
+	h := handler.New(srv)
+	h.Register(mux)
 	mux.Handle("/", http.FileServer(http.FS(sub)))
-	log.Fatal(http.Serve(ln, mux))
+
+	server := &http.Server{
+		Handler: mux,
+	}
+	if err := server.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		slog.Error("server stopped", "err", err)
+		os.Exit(1)
+	}
 }
 
-func openBrowser(url string) {
+func openBrowser(url string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
@@ -54,7 +67,7 @@ func openBrowser(url string) {
 	default:
 		cmd = exec.Command("xdg-open", url)
 	}
-	if err := cmd.Start(); err != nil {
-		log.Println("open browser failed:", err)
-	}
+
+	err := cmd.Start()
+	return err
 }
