@@ -2,6 +2,20 @@
 
 This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/) using [`Go`](https://go.dev/), and developed a frontend using [`TypeScript`](https://www.typescriptlang.org/).
 
+## Screenshot
+
+<p align="center">
+  <b>Desktop</b><br>
+  <img src="img/desktop-1.png" width="400">&nbsp;&nbsp;&nbsp;
+  <img src="img/desktop-2.png" width="400">
+</p>
+
+<p align="center">
+  <b>Mobile</b><br>
+  <img src="img/mobile-1.png" width="200">&nbsp;&nbsp;&nbsp;
+  <img src="img/mobile-2.png" width="200">
+</p>
+
 ## Features
 
 - Key management
