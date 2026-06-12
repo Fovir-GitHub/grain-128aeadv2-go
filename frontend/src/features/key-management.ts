@@ -36,14 +36,13 @@ async function handleWrapSaveKey() {
   downloadBlobFile(blob, "wrapped.key");
 }
 
-// TODO:
-//  Handle different AD format.
 async function handleLoadKeyFile() {
   const b64 = await readTextFileContent(els.loadKeyFile);
   const data = await unwrapKey({
     b64: b64,
     passphrase: getPassword(),
     ad: getAD(),
+    isHex: isADHex(),
   });
   setKey(data.key);
 }

@@ -65,8 +65,18 @@ func (s *KeyManagementService) UnwrapKey(req *model.UnwrapKeyRequest) (*model.Un
 		return nil, fmt.Errorf("invalid json format: %w", err)
 	}
 
+	// Transform `req.AD` into bytes according to the format.
+	var ad []byte
+	if req.IsHex {
+		if ad, err = utils.Hex2Byte(req.AD); err != nil {
+			return nil, fmt.Errorf("invalid hex ad: %w", err)
+		}
+	} else {
+		ad = []byte(req.AD)
+	}
+
 	// Unwrap `k` to obtain `kGrain` and auth the data.
-	kGrain, err := k.Unwrap(req.Passphrase, []byte(req.AD))
+	kGrain, err := k.Unwrap(req.Passphrase, ad)
 	if err != nil {
 		return nil, fmt.Errorf("authentication failed: %w", err)
 	}

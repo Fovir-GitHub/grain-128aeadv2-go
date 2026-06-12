@@ -11,6 +11,7 @@ type UnwrapKeyRequest struct {
 	Base64Content string `json:"b64"`
 	Passphrase    string `json:"passphrase"`
 	AD            string `json:"ad"`
+	IsHex         bool   `json:"isHex"`
 }
 
 type WrapKeyResp struct {
