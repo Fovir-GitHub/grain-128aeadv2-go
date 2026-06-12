@@ -86,10 +86,12 @@
             >
               Wrap &amp; Save .key File
             </button>
-            <label for="key-management-load-key-file"
-              >Load .key File</label
-            >
-            <input type="file" id="key-management-load-key-file" />
+            <span class="inline-group">
+              <label for="key-management-load-key-file"
+                >Load .key File</label
+              >
+              <input type="file" id="key-management-load-key-file" />
+            </span>
           </div>
         </div>
       </div>
@@ -104,12 +106,17 @@
           <button id="nonce-management-generate-key" class="btn">
             Generate IV
           </button>
-          <input type="checkbox" id="nonce-management-auto-generate" />
-          <label
-            class="checkbox-label"
-            for="nonce-management-auto-generate"
-            >Automatically generate unique IV</label
-          >
+          <span class="inline-group">
+            <input
+              type="checkbox"
+              id="nonce-management-auto-generate"
+            />
+            <label
+              class="checkbox-label"
+              for="nonce-management-auto-generate"
+              >Automatically generate unique IV</label
+            >
+          </span>
         </div>
       </div>
 
@@ -158,10 +165,12 @@
               Decrypt
             </button>
             <span class="spacer"></span>
-            <label for="cipher-plaintext-file"
-              >Load Plaintext File</label
-            >
-            <input type="file" id="cipher-plaintext-file" />
+            <span class="inline-group">
+              <label for="cipher-plaintext-file"
+                >Load Plaintext File</label
+              >
+              <input type="file" id="cipher-plaintext-file" />
+            </span>
           </div>
         </div>
 
@@ -197,8 +206,10 @@
           >
             Save .enc File
           </button>
-          <label for="cipher-load-enc-file">Load .enc File</label>
-          <input type="file" id="cipher-load-enc-file" />
+          <span class="inline-group">
+            <label for="cipher-load-enc-file">Load .enc File</label>
+            <input type="file" id="cipher-load-enc-file" />
+          </span>
         </div>
 
         <div class="divider"></div>
