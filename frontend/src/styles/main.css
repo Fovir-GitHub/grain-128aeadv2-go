@@ -35,12 +35,6 @@ main {
   letter-spacing: -0.01em;
 }
 
-.app-header .subtitle {
-  font-size: 0.8125rem;
-  color: #6e7681;
-  margin-top: 0.25rem;
-}
-
 /* Cards */
 .card {
   background: #161b22;
