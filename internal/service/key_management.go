@@ -1,9 +1,7 @@
 package service
 
 import (
-	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/keys"
@@ -53,20 +51,15 @@ func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*model.WrapKe
 }
 
 func (s *KeyManagementService) UnwrapKey(req *model.UnwrapKeyRequest) (*model.UnwrapKeyResp, error) {
-	// Decode base64 content.
-	jsonByte, err := base64.StdEncoding.DecodeString(req.Base64Content)
-	if err != nil {
-		return nil, fmt.Errorf("invalid file content: %w", err)
-	}
-
-	// Unmarshal the json into `keys.Keys`.
-	var k keys.Keys
-	if err := json.Unmarshal(jsonByte, &k); err != nil {
-		return nil, fmt.Errorf("invalid json format: %w", err)
+	// Decode base64 json.
+	k := keys.New()
+	if err := k.Decode(req.Base64Content); err != nil {
+		return nil, err
 	}
 
 	// Transform `req.AD` into bytes according to the format.
 	var ad []byte
+	var err error
 	if req.IsHex {
 		if ad, err = utils.Hex2Byte(req.AD); err != nil {
 			return nil, fmt.Errorf("invalid hex ad: %w", err)

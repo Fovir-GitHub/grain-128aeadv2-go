@@ -2,6 +2,7 @@ package keys
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -19,13 +20,20 @@ const (
 )
 
 type Keys struct {
-	Salt       []byte `json:"salt"`
-	Iterations int    `json:"iteration"`
-	Nonce      []byte `json:"nonce"`
-	Tag        []byte `json:"tag"`
-
 	// Wrapped stores the key after KDF and AES-128-CCM encryption.
-	Wrapped []byte `json:"wrapped"`
+	Wrapped    []byte
+	Salt       []byte
+	Iterations int
+	Nonce      []byte
+	Tag        []byte
+}
+
+type hexKey struct {
+	Salt       string `json:"salt"`
+	Iterations int    `json:"iteration"`
+	Nonce      string `json:"nonce"`
+	Tag        string `json:"tag"`
+	Wrapped    string `json:"wrapped"`
 }
 
 func New() *Keys {
@@ -97,10 +105,12 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 	return a.Auth(kWrap, k.Wrapped, k.Tag)
 }
 
-// Encode marshals the key to JSON format and encodes using base64.
+// Encode transforms bytes to hex, marshals the key to JSON format and encodes using base64.
 func (k *Keys) Encode() (string, error) {
+	hexK := keys2HexKey(k)
+
 	// Marshal JSON.
-	b, err := json.Marshal(k)
+	b, err := json.Marshal(hexK)
 	if err != nil {
 		return "", err
 	}
@@ -108,6 +118,27 @@ func (k *Keys) Encode() (string, error) {
 	// base64 encode.
 	encoded := base64.StdEncoding.EncodeToString(b)
 	return encoded, nil
+}
+
+// Decode unmarshals json (byte format),
+func (k *Keys) Decode(b64 string) error {
+	jsonByte, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return fmt.Errorf("invalid file content: %w", err)
+	}
+
+	var hk hexKey
+	if err := json.Unmarshal(jsonByte, &hk); err != nil {
+		return fmt.Errorf("invalid json format: %w", err)
+	}
+
+	result, err := hexKey2Keys(&hk)
+	if err != nil {
+		return fmt.Errorf("invalid hex: %w", err)
+	}
+
+	*k = *result
+	return nil
 }
 
 func (k *Keys) SaveToFile(path string) error {
@@ -126,4 +157,44 @@ func (k *Keys) ReadFromFile(path string) error {
 	}
 	defer f.Close() //nolint
 	return json.NewDecoder(f).Decode(k)
+}
+
+func keys2HexKey(k *Keys) *hexKey {
+	return &hexKey{
+		Iterations: k.Iterations,
+		Salt:       hex.EncodeToString(k.Salt),
+		Nonce:      hex.EncodeToString(k.Nonce),
+		Tag:        hex.EncodeToString(k.Tag),
+		Wrapped:    hex.EncodeToString(k.Wrapped),
+	}
+}
+
+func hexKey2Keys(hk *hexKey) (*Keys, error) {
+	salt, err := utils.Hex2Byte(hk.Salt)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex salt: %w", err)
+	}
+
+	nonce, err := utils.Hex2Byte(hk.Nonce)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex nonce: %w", err)
+	}
+
+	tag, err := utils.Hex2Byte(hk.Tag)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex tag: %w", err)
+	}
+
+	wrapped, err := utils.Hex2Byte(hk.Wrapped)
+	if err != nil {
+		return nil, fmt.Errorf("invalid hex wrapped key: %w", err)
+	}
+
+	return &Keys{
+		Iterations: hk.Iterations,
+		Salt:       salt,
+		Nonce:      nonce,
+		Tag:        tag,
+		Wrapped:    wrapped,
+	}, nil
 }
