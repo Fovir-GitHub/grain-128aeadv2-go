@@ -2,6 +2,7 @@ import { decrypt, encrypt } from "../lib/api.js";
 import { onChange, onClick } from "../lib/dom.js";
 import {
   els,
+  enabledAutoGenerateIV,
   getCipherInput,
   getCipherOutput,
   getKey,
@@ -21,6 +22,7 @@ import {
   hex2string,
   readTextFileContent,
 } from "../lib/utils.js";
+import { handleGenerateIV } from "./nonce-management.js";
 
 export function RegisterCipherEvents() {
   onClick(els.encryptButton, handleEncrypt);
@@ -31,6 +33,10 @@ export function RegisterCipherEvents() {
 }
 
 async function handleEncrypt() {
+  if (enabledAutoGenerateIV()) {
+    handleGenerateIV();
+  }
+
   const data = await encrypt({
     key: getKey(),
     nonce: getNonce(),

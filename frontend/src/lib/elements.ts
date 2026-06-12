@@ -29,6 +29,7 @@ export const els = {
     "cipher-plaintext-output-text",
   ),
   loadPlaintextFile: getInputElementById("cipher-plaintext-file"),
+  autoGenerateIV: getInputElementById("nonce-management-auto-generate"),
 };
 
 export function getKey(): string {
@@ -105,6 +106,10 @@ export function setInitNFSR(_in: string) {
 
 export function setPlaintextOutputText(pot: string) {
   els.plaintextOutputText.value = pot;
+}
+
+export function enabledAutoGenerateIV(): boolean {
+  return els.autoGenerateIV.checked;
 }
 
 function getInputElementById(id: string): HTMLInputElement {
