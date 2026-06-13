@@ -1,10 +1,12 @@
 package service_test
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/service"
+	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
 )
 
 func TestCipherService_Encrypt(t *testing.T) {
@@ -594,4 +596,279 @@ func TestCipherService_Decrypt(t *testing.T) {
 			checkField("InitNFSR", got.InitNFSR, tt.want.InitNFSR)
 		})
 	}
+}
+
+// TestService_EncryptionFunctionality implements Test Case 1:
+// Encrypt P with (K,V) -> C, (K',V) -> C', (K,V') -> C”.
+// All three ciphertexts (hex(nonce||cipher)) must differ.
+func TestService_EncryptionFunctionality(t *testing.T) {
+	var svc service.CipherService
+
+	plaintext := "0x1234"
+	k1 := "0x00000000000000000000000000000000"
+	k2 := "0x000102030405060708090a0b0c0d0e0f"
+	n1 := "0x000000000000000000000000"
+	n2 := "0x000102030405060708090a0b"
+
+	enc := func(key, nonce string) string {
+		resp, err := svc.Encrypt(&model.EncryptionRequest{
+			Plaintext: plaintext, IsPlaintextHex: true,
+			Nonce: nonce, Key: key,
+		})
+		if err != nil {
+			t.Fatalf("Encrypt() failed: %v", err)
+		}
+		return resp.Ciphertext
+	}
+
+	c1 := enc(k1, n1)
+	t.Logf("1a) plaintext=%s, key=%s, nonce=%s, ciphertext=%s", plaintext, k1, n1, c1)
+
+	c2 := enc(k2, n1)
+	t.Logf("1b) plaintext=%s, key=%s, nonce=%s, ciphertext=%s", plaintext, k2, n1, c2)
+
+	c3 := enc(k1, n2)
+	t.Logf("1c) plaintext=%s, key=%s, nonce=%s, ciphertext=%s", plaintext, k1, n2, c3)
+
+	if c1 == c2 || c1 == c3 || c2 == c3 {
+		t.Error("ciphertexts should all differ when key or IV differs")
+	}
+}
+
+// TestService_DecryptionFunctionality implements Test Case 2:
+// Decrypt C with (K,V), C' with (K',V), C” with (K,V') to recover P.
+func TestService_DecryptionFunctionality(t *testing.T) {
+	var svc service.CipherService
+
+	plaintext := "1234"
+	k1 := "0x00000000000000000000000000000000"
+	k2 := "0x000102030405060708090a0b0c0d0e0f"
+	n1 := "0x000000000000000000000000"
+	n2 := "0x000102030405060708090a0b"
+
+	enc := func(key, nonce string) string {
+		resp, err := svc.Encrypt(&model.EncryptionRequest{
+			Plaintext: plaintext, IsPlaintextHex: true,
+			Nonce: nonce, Key: key,
+		})
+		if err != nil {
+			t.Fatalf("Encrypt() failed: %v", err)
+		}
+		return resp.Ciphertext
+	}
+
+	c1 := enc(k1, n1)
+	c2 := enc(k2, n1)
+	c3 := enc(k1, n2)
+
+	dec := func(key, nonceCiphertext string) string {
+		resp, err := svc.Decrypt(&model.DecryptionRequest{
+			NonceCiphertext: nonceCiphertext, Key: key,
+		})
+		if err != nil {
+			t.Fatalf("Decrypt() failed: %v", err)
+		}
+		return resp.Plaintext
+	}
+
+	// a) Decrypt C with (K1,V1) -> P
+	p1 := dec(k1, c1)
+	t.Logf("2a) ciphertext=%s, key=%s, plaintext=%s", c1, k1, p1)
+	if p1 != plaintext {
+		t.Errorf("decrypt C with (K1,V1) failed: got %s, want %x", p1, plaintext)
+	}
+
+	// b) Decrypt C' with (K2,V1) -> P
+	p2 := dec(k2, c2)
+	t.Logf("2b) ciphertext=%s, key=%s, plaintext=%s", c2, k2, p2)
+	if p2 != plaintext {
+		t.Errorf("decrypt C' with (K2,V1) failed: got %s, want %x", p2, plaintext)
+	}
+
+	// c) Decrypt C'' with (K1,V2) -> P
+	p3 := dec(k1, c3)
+	t.Logf("2c) ciphertext=%s, key=%s, plaintext=%s", c3, k1, p3)
+	if p3 != plaintext {
+		t.Errorf("decrypt C'' with (K1,V2) failed: got %s, want %x", p3, plaintext)
+	}
+}
+
+// TestService_DecryptionWrongInput implements Test Case 3:
+// Decrypt C with wrong key and/or wrong IV; should get wrong plaintext.
+func TestService_DecryptionWrongInput(t *testing.T) {
+	var svc service.CipherService
+
+	plaintext := "1234"
+	k := "0x00000000000000000000000000000000"
+	kPrime := "0x000102030405060708090a0b0c0d0e0f"
+	n := "0x000000000000000000000000"
+	nPrime := "0x000102030405060708090a0b"
+
+	resp, err := svc.Encrypt(&model.EncryptionRequest{
+		Plaintext: plaintext, IsPlaintextHex: true,
+		Nonce: n, Key: k,
+	})
+	if err != nil {
+		t.Fatalf("Encrypt() failed: %v", err)
+	}
+	c := resp.Ciphertext
+	t.Logf("3) plaintext=%s, key=%s, nonce=%s, ciphertext=%s", plaintext, k, n, c)
+
+	// a) Decrypt with wrong key K', correct IV V
+	pWrongKey, err := svc.Decrypt(&model.DecryptionRequest{
+		NonceCiphertext: c, Key: kPrime,
+	})
+	if err != nil {
+		t.Fatalf("Decrypt with wrong key failed: %v", err)
+	}
+	t.Logf("3a) ciphertext=%s, wrongKey=%s, decrypted=%s", c, kPrime, pWrongKey.Plaintext)
+	if pWrongKey.Plaintext == plaintext {
+		t.Error("decrypt with wrong key should not recover original plaintext")
+	}
+
+	// b) Decrypt with correct key K, wrong IV V' (replace nonce portion)
+	cBytes, _ := hex.DecodeString(c)
+	wrongIVBytes := make([]byte, len(cBytes))
+	copy(wrongIVBytes, cBytes)
+	nPrimeBytes, _ := utils.Hex2Byte(nPrime)
+	copy(wrongIVBytes[:12], nPrimeBytes)
+	cWrongIV := hex.EncodeToString(wrongIVBytes)
+
+	pWrongIV, err := svc.Decrypt(&model.DecryptionRequest{
+		NonceCiphertext: cWrongIV, Key: k,
+	})
+	if err != nil {
+		t.Fatalf("Decrypt with wrong IV failed: %v", err)
+	}
+	t.Logf("3b) ciphertext=%s, correctKey=%s, wrongNonce=%s, decrypted=%s", cWrongIV, k, nPrime, pWrongIV.Plaintext)
+	if pWrongIV.Plaintext == plaintext {
+		t.Error("decrypt with wrong IV should not recover original plaintext")
+	}
+
+	// c) Decrypt with wrong key K' and wrong IV V'
+	pWrongBoth, err := svc.Decrypt(&model.DecryptionRequest{
+		NonceCiphertext: cWrongIV, Key: kPrime,
+	})
+	if err != nil {
+		t.Fatalf("Decrypt with wrong key and IV failed: %v", err)
+	}
+	t.Logf("3c) ciphertext=%s, wrongKey=%s, wrongNonce=%s, decrypted=%s", cWrongIV, kPrime, nPrime, pWrongBoth.Plaintext)
+	if pWrongBoth.Plaintext == plaintext {
+		t.Error("decrypt with wrong key and wrong IV should not recover original plaintext")
+	}
+}
+
+// TestService_ErrorPropagation implements Test Case 5:
+// Bit-flip, bit-insertion, and bit-deletion errors in ciphertext.
+func TestService_ErrorPropagation(t *testing.T) {
+	var svc service.CipherService
+
+	plaintext := "1234"
+	k := "000102030405060708090a0b0c0d0e0f"
+	n := "000102030405060708090a0b"
+
+	resp, err := svc.Encrypt(&model.EncryptionRequest{
+		Plaintext: plaintext, IsPlaintextHex: true,
+		Nonce: n, Key: k,
+	})
+	if err != nil {
+		t.Fatalf("Encrypt() failed: %v", err)
+	}
+
+	// Decode the hex ciphertext (nonce || actual ciphertext).
+	// Use three-index slice to prevent append from aliasing into ct.
+	full, _ := hex.DecodeString(resp.Ciphertext)
+	nonce := full[:12:12]
+	ct := make([]byte, len(full)-12)
+	copy(ct, full[12:])
+
+	// Helper: decrypt modified bytes.
+	decrypt := func(modified []byte) string {
+		combined := make([]byte, 0, len(nonce)+len(modified))
+		combined = append(combined, nonce...)
+		combined = append(combined, modified...)
+		dresp, derr := svc.Decrypt(&model.DecryptionRequest{
+			NonceCiphertext: hex.EncodeToString(combined), Key: k,
+		})
+		if derr != nil {
+			t.Fatalf("Decrypt() failed: %v", derr)
+		}
+		return dresp.Plaintext
+	}
+
+	t.Run("bit-flip", func(t *testing.T) {
+		ct2 := make([]byte, len(ct))
+		copy(ct2, ct)
+		ct2[0] ^= 0x08
+
+		t.Logf("5a) original ciphertext=%s", resp.Ciphertext)
+		combined := make([]byte, 0, len(nonce)+len(ct2))
+		combined = append(combined, nonce...)
+		combined = append(combined, ct2...)
+		t.Logf("5a) flipped hex=%s", hex.EncodeToString(combined))
+
+		p := decrypt(ct2)
+		t.Logf("5a) decrypted plaintext=%s", p)
+		if p == plaintext {
+			t.Error("decryption of bit-flipped ciphertext should not match original plaintext")
+		}
+
+		// Verify only one byte differs.
+		origPt, _ := hex.DecodeString(plaintext)
+		gotPt, _ := hex.DecodeString(p)
+		diffCount := 0
+		for i := range origPt {
+			if origPt[i] != gotPt[i] {
+				diffCount++
+			}
+		}
+		t.Logf("5a) differing byte count=%d (expected 1)", diffCount)
+		if diffCount != 1 {
+			t.Errorf("expected exactly 1 byte to differ, got %d", diffCount)
+		}
+	})
+
+	t.Run("bit-insertion", func(t *testing.T) {
+		bits := utils.Byte2Bits(ct)
+		pos := 9
+		bits = append(bits[:pos], append([]int{0}, bits[pos:]...)...)
+		bits = bits[:len(bits)-1]
+		ct2, err := utils.Bits2Byte(bits)
+		if err != nil {
+			t.Fatalf("Bits2Byte failed: %v", err)
+		}
+
+		fullHex := hex.EncodeToString(append(append([]byte{}, nonce...), ct...))
+		modHex := hex.EncodeToString(append(append([]byte{}, nonce...), ct2...))
+		t.Logf("5b) original ciphertext=%s", fullHex)
+		t.Logf("5b) inserted bit 0 at pos %d: %s", pos, modHex)
+
+		p := decrypt(ct2)
+		t.Logf("5b) decrypted plaintext=%s", p)
+		if p == plaintext {
+			t.Error("decryption of bit-inserted ciphertext should not match original plaintext")
+		}
+	})
+
+	t.Run("bit-deletion", func(t *testing.T) {
+		bits := utils.Byte2Bits(ct)
+		pos := 9
+		bits = append(bits[:pos], bits[pos+1:]...)
+		bits = append(bits, 0)
+		ct2, err := utils.Bits2Byte(bits)
+		if err != nil {
+			t.Fatalf("Bits2Byte failed: %v", err)
+		}
+
+		fullHex := hex.EncodeToString(append(append([]byte{}, nonce...), ct...))
+		modHex := hex.EncodeToString(append(append([]byte{}, nonce...), ct2...))
+		t.Logf("5c) original ciphertext=%s", fullHex)
+		t.Logf("5c) deleted bit at pos %d: %s", pos, modHex)
+
+		p := decrypt(ct2)
+		t.Logf("5c) decrypted plaintext=%s", p)
+		if p == plaintext {
+			t.Error("decryption of bit-deleted ciphertext should not match original plaintext")
+		}
+	})
 }
