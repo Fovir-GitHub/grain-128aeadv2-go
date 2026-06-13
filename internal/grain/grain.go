@@ -24,11 +24,11 @@ func New(key, nonce []byte) (*Grain128AEADV2, error) {
 	n := utils.Byte2Bits(nonce)
 
 	if len(k) != KeyGrainBitLength {
-		return nil, fmt.Errorf("key length should be %v bits (len=%v)", KeyGrainBitLength, len(key))
+		return nil, fmt.Errorf("key length should be %v bits (len=%v)", KeyGrainBitLength, len(k))
 	}
 
 	if len(n) != 96 {
-		return nil, fmt.Errorf("nonce length should be %v bits (len=%v)", NonceBitLength, len(nonce))
+		return nil, fmt.Errorf("nonce length should be %v bits (len=%v)", NonceBitLength, len(n))
 	}
 
 	return &Grain128AEADV2{
