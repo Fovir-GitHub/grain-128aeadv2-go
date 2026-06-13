@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
@@ -29,6 +30,7 @@ func (h *Handler) handleCipher(isEncryption bool) http.HandlerFunc {
 		}
 
 		if err != nil {
+			slog.Error("encrypt/decrypt failed", "err", err)
 			writeError(w, http.StatusInternalServerError, err.Error())
 			return
 		}
