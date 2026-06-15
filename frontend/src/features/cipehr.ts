@@ -44,6 +44,7 @@ async function handleEncrypt() {
     isInputHex: isCipehrInputHex(),
   });
 
+  setPlaintextOutputText("");
   setCipherOutput(data.output);
   setLoadedLFSR(data.loadedLFSR);
   setLoadedNFSR(data.loadedNFSR);
