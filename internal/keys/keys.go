@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/grain"
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/utils"
@@ -140,24 +139,6 @@ func (k *Keys) Decode(b64 string) error {
 
 	*k = *result
 	return nil
-}
-
-func (k *Keys) SaveToFile(path string) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close() //nolint
-	return json.NewEncoder(f).Encode(k)
-}
-
-func (k *Keys) ReadFromFile(path string) error {
-	f, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close() //nolint
-	return json.NewDecoder(f).Decode(k)
 }
 
 func keys2HexKey(k *Keys) *hexKey {
