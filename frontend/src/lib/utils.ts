@@ -7,6 +7,7 @@ export function generateHex(byte: number): string {
     .join("");
 }
 
+// Read file content as text when the user uploads a file.
 export async function readTextFileContent(
   input: HTMLInputElement,
 ): Promise<string> {
@@ -17,6 +18,7 @@ export async function readTextFileContent(
   return await file.text();
 }
 
+// Download a blob file named `filename`.
 export function downloadBlobFile(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -28,6 +30,7 @@ export function downloadBlobFile(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+// Convert hex format string to text string.
 export function hex2string(hex: string): string {
   hex = hex.replace(/^0x/, "");
 
@@ -39,6 +42,7 @@ export function hex2string(hex: string): string {
   return new TextDecoder().decode(bytes);
 }
 
+// Create a blob object with plain text format content.
 export function createBlobWithFileContent(content: string): Blob {
   return new Blob([content], { type: "text/plain" });
 }

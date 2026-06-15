@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// Byte2Bits transforms byte to bits format (LSB-First).
 func Byte2Bits(b []byte) []int {
 	bits := make([]int, len(b)*8)
 	for i, v := range b {
@@ -17,6 +18,7 @@ func Byte2Bits(b []byte) []int {
 	return bits
 }
 
+// Bits2Byte transforms bits (LSB-First) to byte format.
 func Bits2Byte(bits []int) ([]byte, error) {
 	if len(bits)%8 != 0 {
 		return nil, fmt.Errorf("the length of bits is not divided by 8")
@@ -37,6 +39,7 @@ func Bits2Byte(bits []int) ([]byte, error) {
 	return bytes, nil
 }
 
+// Hex2Byte trims the prefix `0x` in a hex string, and convert it to bytes.
 func Hex2Byte(s string) ([]byte, error) {
 	s = strings.TrimPrefix(strings.ToLower(s), "0x")
 	b, err := hex.DecodeString(s)
@@ -46,6 +49,7 @@ func Hex2Byte(s string) ([]byte, error) {
 	return b, nil
 }
 
+// Bits2Hex transforms bits to hex string.
 func Bits2Hex(bits []int) (string, error) {
 	b, err := Bits2Byte(bits)
 	if err != nil {
@@ -54,6 +58,7 @@ func Bits2Hex(bits []int) (string, error) {
 	return hex.EncodeToString(b), nil
 }
 
+// validateBits checks whether a bit is valid (0 or 1).
 func validateBits(bits []int) error {
 	for _, b := range bits {
 		if b != 0 && b != 1 {

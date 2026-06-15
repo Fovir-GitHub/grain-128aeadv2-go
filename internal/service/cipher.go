@@ -16,6 +16,7 @@ func newCipherService() *CipherService {
 	return &CipherService{}
 }
 
+// Encrypt implements the encryption service.
 func (c *CipherService) Encrypt(req *model.EncryptionRequest) (*model.EncryptionResp, error) {
 	// Trim space around key and nonce.
 	req.Key = strings.TrimSpace(req.Key)
@@ -66,6 +67,7 @@ func (c *CipherService) Encrypt(req *model.EncryptionRequest) (*model.Encryption
 	}, nil
 }
 
+// Decrypt implements the decrytion service.
 func (c *CipherService) Decrypt(req *model.DecryptionRequest) (*model.DecryptionResp, error) {
 	const nonceByteLength = grain.NonceBitLength / 8
 

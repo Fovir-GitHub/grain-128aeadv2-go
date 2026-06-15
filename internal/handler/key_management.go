@@ -8,6 +8,7 @@ import (
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
 )
 
+// handleKeyManagement is a function factory used to handle key wrap or unwrap request.
 func (h *Handler) handleKeyManagement(isWrap bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var resp any

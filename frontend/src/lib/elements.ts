@@ -1,3 +1,4 @@
+// Interactive elements in the page.
 export const els = {
   key: getInputElementById("key-management-key-input"),
   password: getInputElementById("key-management-password"),
@@ -32,6 +33,8 @@ export const els = {
   loadPlaintextFile: getInputElementById("cipher-plaintext-file"),
   autoGenerateIV: getInputElementById("nonce-management-auto-generate"),
 };
+
+// Getters and setters.
 
 export function getKey(): string {
   return els.key.value;

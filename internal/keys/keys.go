@@ -28,6 +28,7 @@ type Keys struct {
 	Tag        []byte
 }
 
+// hexKey stores `Keys` information in hex string format.
 type hexKey struct {
 	Salt       string `json:"salt"`
 	Iterations int    `json:"iteration"`
@@ -120,7 +121,7 @@ func (k *Keys) Encode() (string, error) {
 	return encoded, nil
 }
 
-// Decode unmarshals json (byte format),
+// Decode unmarshals json (byte format), and update the `Keys` object.
 func (k *Keys) Decode(b64 string) error {
 	jsonByte, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil {

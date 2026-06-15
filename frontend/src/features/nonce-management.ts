@@ -6,6 +6,7 @@ export function RegisterNonceManagementEvents() {
   onClick(els.generateIVButton, handleGenerateIV);
 }
 
+// Generate a random IV in the format of `0x` + 12-byte (96-bit) hex.
 export function handleGenerateIV() {
   setNonce("0x" + generateHex(12));
 }

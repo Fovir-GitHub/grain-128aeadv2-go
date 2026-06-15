@@ -5,6 +5,7 @@ type Service struct {
 	Cipher        *CipherService
 }
 
+// Register services.
 func New() *Service {
 	return &Service{
 		KeyManagement: newKeyManagement(),

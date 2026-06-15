@@ -8,6 +8,7 @@ import (
 	"github.com/Fovir-GitHub/grain-128aeadv2-go/internal/model"
 )
 
+// handleCipher is a function factory to produce function used to handle encryption or decryption request.
 func (h *Handler) handleCipher(isEncryption bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var resp any

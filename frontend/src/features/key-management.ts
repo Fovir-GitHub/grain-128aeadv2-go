@@ -21,11 +21,14 @@ export function RegisterKeyManagementEvents() {
   onChange(els.loadKeyFile, handleLoadKeyFile);
 }
 
+// Fill key field with `0x` and a random 16-byte (128-bit) hex string.
 function handleGenerateKey() {
   setKey("0x" + generateHex(16));
 }
 
+// Wrap the key with given password and associated data and store in `wrapped.key`.
 async function handleWrapSaveKey() {
+  // Call API.
   const data = await wrapKey({
     key: getKey(),
     password: getPassword(),
@@ -36,6 +39,7 @@ async function handleWrapSaveKey() {
   downloadBlobFile(blob, "wrapped.key");
 }
 
+// Load a `.key` file and unwrap it.
 async function handleLoadKeyFile() {
   const b64 = await readTextFileContent(els.loadKeyFile);
   const data = await unwrapKey({
