@@ -24,6 +24,7 @@ export const els = {
   encryptButton: getButtonElementById("cipher-encrypt"),
   decryptButton: getButtonElementById("cipher-decrypt"),
   saveEncFileButton: getButtonElementById("cipher-save-enc-file"),
+  saveDecFileButton: getButtonElementById("cipher-save-dec-file"),
   loadEncFile: getInputElementById("cipher-plaintext-file"),
   plaintextOutputText: getTextAreaElementById(
     "cipher-plaintext-output-text",
@@ -102,6 +103,10 @@ export function setInitLFSR(il: string) {
 
 export function setInitNFSR(_in: string) {
   els.initNFSR.value = _in;
+}
+
+export function getPlaintextOutputText(): string {
+  return els.plaintextOutputText.value;
 }
 
 export function setPlaintextOutputText(pot: string) {

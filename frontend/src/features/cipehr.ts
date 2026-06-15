@@ -7,6 +7,7 @@ import {
   getCipherOutput,
   getKey,
   getNonce,
+  getPlaintextOutputText,
   isCipehrInputHex,
   setCipherInput,
   setCipherOutput,
@@ -29,6 +30,7 @@ export function RegisterCipherEvents() {
   onClick(els.decryptButton, handleDecrypt);
   onChange(els.loadPlaintextFile, handleLoadPlaintextFile);
   onClick(els.saveEncFileButton, handleSaveEncFile);
+  onClick(els.saveDecFileButton, handleSaveDecFile);
   onChange(els.loadEncFile, handleLoadEncFile);
 }
 
@@ -84,4 +86,19 @@ async function handleDecrypt() {
 async function handleLoadEncFile() {
   const ciphertext = await readTextFileContent(els.loadEncFile);
   setCipherInput(ciphertext);
+}
+
+function handleSaveDecFile() {
+  if (getPlaintextOutputText() == "") {
+    alert("no decryption");
+    return;
+  }
+
+  const content = JSON.stringify({
+    hex: getCipherOutput(),
+    text: getPlaintextOutputText(),
+  });
+
+  const blob = createBlobWithFileContent(content);
+  downloadBlobFile(blob, "plaintext.dec");
 }
