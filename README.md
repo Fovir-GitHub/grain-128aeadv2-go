@@ -31,6 +31,7 @@ This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/)
   - Output loaded states and initial states of both LFSR and NFSR
   - Output ciphertext in the format of `IV` + `Ciphertext`
   - Store ciphertext into a `.enc` file
+  - Store plaintext into a `.dec` file
 
 ## Usage
 
