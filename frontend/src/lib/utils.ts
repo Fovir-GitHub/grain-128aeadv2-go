@@ -46,3 +46,10 @@ export function hex2string(hex: string): string {
 export function createBlobWithFileContent(content: string): Blob {
   return new Blob([content], { type: "text/plain" });
 }
+
+export function prepend0xToHex(s: string): string {
+  if (!s.toLowerCase().startsWith("0x")) {
+    s = "0x" + s;
+  }
+  return s;
+}

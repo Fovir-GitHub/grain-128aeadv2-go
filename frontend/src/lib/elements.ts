@@ -1,3 +1,5 @@
+import { prepend0xToHex } from "./utils";
+
 // Interactive elements in the page.
 export const els = {
   key: getInputElementById("key-management-key-input"),
@@ -41,7 +43,7 @@ export function getKey(): string {
 }
 
 export function setKey(k: string) {
-  els.key.value = k;
+  els.key.value = prepend0xToHex(k);
 }
 
 export function getPassword(): string {
@@ -69,7 +71,7 @@ export function getNonce(): string {
 }
 
 export function setNonce(n: string) {
-  els.nonce.value = n;
+  els.nonce.value = prepend0xToHex(n);
 }
 
 export function getCipherInput(): string {
@@ -89,7 +91,7 @@ export function getCipherOutput(): string {
 }
 
 export function setCipherOutput(co: string) {
-  els.cipherOutput.value = co;
+  els.cipherOutput.value = prepend0xToHex(co);
 }
 
 export function setLoadedLFSR(ll: string) {
