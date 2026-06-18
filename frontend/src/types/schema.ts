@@ -28,6 +28,7 @@ export interface DecryptionRequest {
 }
 export interface DecryptionResp {
   output: string;
+  nonce: string;
   loadedLFSR: string;
   loadedNFSR: string;
   initLFSR: string;

@@ -27,6 +27,7 @@ type DecryptionRequest struct {
 
 type DecryptionResp struct {
 	Plaintext string `json:"output"`
+	Nonce     string `json:"nonce"`
 
 	// States in hex format.
 

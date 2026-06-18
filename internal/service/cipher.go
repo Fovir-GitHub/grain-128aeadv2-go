@@ -108,8 +108,12 @@ func (c *CipherService) Decrypt(req *model.DecryptionRequest) (*model.Decryption
 	// Encode plaintext to hex.
 	plaintext := hex.EncodeToString(plaintextByte)
 
+	// Get hex format nonce.
+	nonceHexStr := hex.EncodeToString(nonce)
+
 	return &model.DecryptionResp{
 		Plaintext:  plaintext,
+		Nonce:      nonceHexStr,
 		LoadedLFSR: loadedLFSR,
 		LoadedNFSR: loadedNFSR,
 		InitLFSR:   initLFSR,

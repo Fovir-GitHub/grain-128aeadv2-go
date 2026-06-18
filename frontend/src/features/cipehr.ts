@@ -15,6 +15,7 @@ import {
   setInitNFSR,
   setLoadedLFSR,
   setLoadedNFSR,
+  setNonce,
   setPlaintextOutputText,
 } from "../lib/elements.js";
 import {
@@ -89,6 +90,7 @@ async function handleDecrypt() {
   setLoadedNFSR(data.loadedNFSR);
   setInitLFSR(data.initLFSR);
   setInitNFSR(data.initNFSR);
+  setNonce(data.nonce);
   setPlaintextOutputText(hex2string(data.output));
 }
 
