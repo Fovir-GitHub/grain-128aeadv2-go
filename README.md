@@ -36,7 +36,7 @@ This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/)
 - Key management
   - Key generation
   - Key wrapping, unwrapping, and authentication using `PBKDF2-HMAC-SHA256` and `AES-128-CCM`
-  - Store wrapped `.key` file with Base64 encoded
+  - Store wrapped `.key` file in Hex format
 - Nonce/IV management
   - Random nonce/IV generation
   - Automatically unique nonce/IV generation
