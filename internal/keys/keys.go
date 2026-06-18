@@ -1,7 +1,6 @@
 package keys
 
 import (
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -105,7 +104,7 @@ func (k *Keys) Unwrap(passphrase string, ad []byte) (kGrain []byte, err error) {
 	return a.Auth(kWrap, k.Wrapped, k.Tag)
 }
 
-// Encode transforms bytes to hex, marshals the key to JSON format and encodes using base64.
+// Encode transforms bytes to hex, marshals the key to JSON format.
 func (k *Keys) Encode() (string, error) {
 	hexK := keys2HexKey(k)
 
@@ -115,20 +114,13 @@ func (k *Keys) Encode() (string, error) {
 		return "", err
 	}
 
-	// base64 encode.
-	encoded := base64.StdEncoding.EncodeToString(b)
-	return encoded, nil
+	return string(b), nil
 }
 
 // Decode unmarshals json (byte format), and update the `Keys` object.
 func (k *Keys) Decode(b64 string) error {
-	jsonByte, err := base64.StdEncoding.DecodeString(b64)
-	if err != nil {
-		return fmt.Errorf("invalid file content: %w", err)
-	}
-
 	var hk hexKey
-	if err := json.Unmarshal(jsonByte, &hk); err != nil {
+	if err := json.Unmarshal([]byte(b64), &hk); err != nil {
 		return fmt.Errorf("invalid json format: %w", err)
 	}
 

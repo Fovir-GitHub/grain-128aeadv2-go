@@ -41,9 +41,9 @@ async function handleWrapSaveKey() {
 
 // Load a `.key` file and unwrap it.
 async function handleLoadKeyFile() {
-  const b64 = await readTextFileContent(els.loadKeyFile);
+  const content = await readTextFileContent(els.loadKeyFile);
   const data = await unwrapKey({
-    b64: b64,
+    content: content,
     passphrase: getPassword(),
     ad: getAD(),
     isHex: isADHex(),

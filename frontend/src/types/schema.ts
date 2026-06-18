@@ -45,7 +45,7 @@ export interface WrapKeyRequest {
   isHex: boolean;
 }
 export interface UnwrapKeyRequest {
-  b64: string;
+  content: string;
   passphrase: string;
   ad: string;
   isHex: boolean;

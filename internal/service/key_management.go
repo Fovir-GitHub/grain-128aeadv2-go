@@ -51,9 +51,8 @@ func (s *KeyManagementService) WrapKey(req *model.WrapKeyRequest) (*model.WrapKe
 }
 
 func (s *KeyManagementService) UnwrapKey(req *model.UnwrapKeyRequest) (*model.UnwrapKeyResp, error) {
-	// Decode base64 json.
 	k := keys.New()
-	if err := k.Decode(req.Base64Content); err != nil {
+	if err := k.Decode(req.Content); err != nil {
 		return nil, err
 	}
 
