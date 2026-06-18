@@ -20,6 +20,7 @@
         gotools
         govulncheck
         just
+        markdown-toc
         prettier
         tygo
         typescript
