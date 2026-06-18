@@ -16,6 +16,21 @@ This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/)
   <img src="img/mobile-2.png" width="200">
 </p>
 
+## Table of Contents
+
+<!-- toc -->
+
+- [Features](#features)
+- [Usage](#usage)
+- [Development](#development)
+  - [Requirements](#requirements)
+  - [Project Structure](#project-structure)
+  - [Commands](#commands)
+- [License](#license)
+- [Acknowledgement](#acknowledgement)
+
+<!-- tocstop -->
+
 ## Features
 
 - Key management
