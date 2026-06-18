@@ -1,6 +1,6 @@
 # Grain-128AEADv2 Go
 
-This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/) using [`Go`](https://go.dev/), and developed a frontend using [`TypeScript`](https://www.typescriptlang.org/).
+This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/) using [`Go`](https://go.dev/), and develops a frontend using [`TypeScript`](https://www.typescriptlang.org/).
 
 ## Screenshot
 
@@ -52,7 +52,7 @@ This repository implements [`Grain-128AEADv2`](https://grain-128aead.github.io/)
 ```text
 .
 ├── frontend
-│   ├── js <- JavaScript compiled from `src/` folder using `esbuild`
+│   ├── js/ <- JavaScript compiled from `src/` folder using `esbuild`
 │   ├── src
 │   │   ├── features/ <- Key management, nonce management, and cipher operation
 │   │   ├── lib/ <- API, elements, DOM operation, etc.
